@@ -163,6 +163,36 @@ class LoginFormTest extends AbstractController
      * @magentoAdminConfigFixture recaptcha_backend/type_invisible/private_key test_private_key
      * @magentoAdminConfigFixture recaptcha_backend/type_for/user_login invisible
      */
+    public function testPostRequestIfReCaptchaParameterIsMissedWithRef(): void
+    {
+        $postValues = [];
+        $this->getRequest()
+            ->setMethod(Http::METHOD_POST)
+            ->setPostValue(array_replace_recursive(
+                [
+                    'form_key' => $this->formKey->getFormKey(),
+                    'login' => [
+                        'username' => Bootstrap::ADMIN_NAME,
+                        'password' => Bootstrap::ADMIN_PASSWORD,
+                    ],
+                ],
+                $postValues
+            ));
+        $this->dispatch('backend/admin/dashboard/index');
+        $this->assertSessionMessages(
+            self::equalTo(['Something went wrong with reCAPTCHA. Please contact the store owner.']),
+            MessageInterface::TYPE_ERROR
+        );
+        self::assertFalse($this->auth->isLoggedIn());
+    }
+
+    /**
+     * @magentoAdminConfigFixture admin/security/use_form_key 0
+     * @magentoAdminConfigFixture admin/captcha/enable 0
+     * @magentoAdminConfigFixture recaptcha_backend/type_invisible/public_key test_public_key
+     * @magentoAdminConfigFixture recaptcha_backend/type_invisible/private_key test_private_key
+     * @magentoAdminConfigFixture recaptcha_backend/type_for/user_login invisible
+     */
     public function testPostRequestWithFailedReCaptchaValidation(): void
     {
         $this->captchaValidationResultMock->expects($this->once())->method('isValid')->willReturn(false);
