@@ -2,7 +2,7 @@
     "name": "magento/module-two-factor-auth",
     "description": "Two Factor Authentication module for Magento2",
     "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
+        "php": "~8.2.0||~8.3.0",
         "magento/framework": "*",
         "magento/magento-composer-installer": "*",
         "magento/module-backend": "*",
