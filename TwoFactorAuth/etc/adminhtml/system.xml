@@ -49,19 +49,24 @@
             <group id="duo" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0"
                    showInStore="0">
                 <label>Duo Security</label>
-                <field id="integration_key" translate="label comment" type="text" sortOrder="20" showInDefault="1"
+                <field id="client_id" translate="label comment" type="text" sortOrder="20" showInDefault="1"
                        showInWebsite="0" showInStore="0">
-                    <label>Integration key</label>
+                    <label>Client Id</label>
                 </field>
-                <field id="secret_key" translate="label comment" type="obscure" sortOrder="30" showInDefault="1"
+                <field id="client_secret" translate="label comment" type="obscure" sortOrder="30" showInDefault="1"
                        showInWebsite="0" showInStore="0">
-                    <label>Secret key</label>
+                    <label>Client Secret</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
                 <field id="api_hostname" translate="label comment" type="text" sortOrder="40" showInDefault="1"
                        showInWebsite="0" showInStore="0">
                     <label>API hostname</label>
                     <backend_model>Magento\TwoFactorAuth\Model\Config\Backend\Duo\ApiHostname</backend_model>
+                </field>
+                <field id="duo_failmode" translate="label comment" type="select" sortOrder="50" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Duo Failmode</label>
+                    <source_model>Magento\TwoFactorAuth\Model\Config\Source\DuoFailmode</source_model>
                 </field>
             </group>
 
