@@ -17,9 +17,7 @@ define([
             template: 'Magento_TwoFactorAuth/duo/auth'
         },
 
-        signature: '',
-        apiHost: '',
-        postUrl: '',
+        redirectUrl: '',
         authenticateData: {},
 
         /**
@@ -27,32 +25,8 @@ define([
          */
         onAfterRender: function () {
             window.setTimeout(function () {
-                duo.init();
-            }, 100);
+                duo(this, null);
+            }, 1000);
         },
-
-        /**
-         * Get POST URL
-         * @returns {String}
-         */
-        getPostUrl: function () {
-            return this.postUrl;
-        },
-
-        /**
-         * Get signature
-         * @returns {String}
-         */
-        getSignature: function () {
-            return this.signature;
-        },
-
-        /**
-         * Get API host
-         * @returns {String}
-         */
-        getApiHost: function () {
-            return this.apiHost;
-        }
     });
 });

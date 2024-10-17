@@ -6,6 +6,12 @@ use Magento\Framework\Data\OptionSourceInterface;
 
 class DuoFailmode implements OptionSourceInterface
 {
+
+    /**
+     * Get options
+     *
+     * @return array[]
+     */
     public function toOptionArray()
     {
         return [
@@ -13,5 +19,4 @@ class DuoFailmode implements OptionSourceInterface
             ['value' => 'open', 'label' => __('Open')]
         ];
     }
-
 }

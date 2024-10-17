@@ -9,6 +9,8 @@ namespace Magento\TwoFactorAuth\Block\Provider\Duo;
 
 use Magento\Backend\Block\Template;
 use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
 
 /**
@@ -27,6 +29,11 @@ class Auth extends Template
     private $session;
 
     /**
+     * @var ManagerInterface
+     */
+    private $messageManager;
+
+    /**
      * @param Template\Context $context
      * @param Session $session
      * @param DuoSecurity $duoSecurity
@@ -36,11 +43,13 @@ class Auth extends Template
         Template\Context $context,
         Session $session,
         DuoSecurity $duoSecurity,
+        ManagerInterface $messageManager,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->duoSecurity = $duoSecurity;
         $this->session = $session;
+        $this->messageManager = $messageManager;
     }
 
     /**
@@ -48,15 +57,32 @@ class Auth extends Template
      */
     public function getJsLayout()
     {
-        $this->jsLayout['components']['tfa-auth']['postUrl'] =
-            $this->getUrl('*/*/authpost', ['form_key' => $this->getFormKey()]);
+        $duoFailMode = $this->duoSecurity->getDuoFailmode();
+        try {
+            $this->duoSecurity->healthCheck();
+        } catch (LocalizedException $e) {
+            if ($duoFailMode == "OPEN") {
+                // If we're failing open, errors in 2FA still allow for success
+                $this->messageManager->addSuccessMessage(
+                    __("Login 'Successful', but 2FA Not Performed. Confirm Duo client/secret/host values are correct")
+                );
+                return $this->_redirect('adminhtml/dashboard');
+            } else {
+                // Otherwise the login fails and redirect user to the login page
+                $this->messageManager->addErrorMessage(
+                    __("2FA Unavailable. Confirm Duo client/secret/host values are correct")
+                );
+                return $this->_redirect('adminhtml');
+            }
+        }
 
-        $this->jsLayout['components']['tfa-auth']['signature'] =
-            $this->duoSecurity->getRequestSignature($this->session->getUser());
 
-        $this->jsLayout['components']['tfa-auth']['apiHost'] =
-            $this->duoSecurity->getApiHostname();
-
+        $user = $this->session->getUser();
+        if ($user) {
+            $username = $user->getUserName();
+        }
+        $prompt_uri = $this->duoSecurity->initiateAuth($username, $this->getFormKey().'lavijain');
+        $this->jsLayout['components']['tfa-auth']['redirectUrl'] = $prompt_uri;
         return parent::getJsLayout();
     }
 }

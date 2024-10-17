@@ -9,7 +9,7 @@ namespace Magento\TwoFactorAuth\Controller\Adminhtml\Duo;
 
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
-use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\DataObjectFactory;
 use Magento\TwoFactorAuth\Model\AlertInterface;
 use Magento\TwoFactorAuth\Api\TfaInterface;
@@ -24,7 +24,7 @@ use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
  *
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Authpost extends AbstractAction implements HttpPostActionInterface
+class Authpost extends AbstractAction implements HttpGetActionInterface
 {
     /**
      * @var TfaInterface
