@@ -89,6 +89,7 @@ class Reset extends AbstractAction implements HttpGetActionInterface, HttpPostAc
      */
     protected function _isAllowed()
     {
-        return parent::_isAllowed() && $this->_authorization->isAllowed('Magento_TwoFactorAuth::tfa');
+        return parent::_isAllowed() && $this->_authorization->isAllowed('Magento_TwoFactorAuth::tfa')
+            && $this->_authorization->isAllowed('Magento_User::acl_users');
     }
 }

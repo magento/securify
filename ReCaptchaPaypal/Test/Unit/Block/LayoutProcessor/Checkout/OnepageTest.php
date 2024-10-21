@@ -107,7 +107,7 @@ class OnepageTest extends TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function processDataProvider(): array
+    public static function processDataProvider(): array
     {
         return [
             [

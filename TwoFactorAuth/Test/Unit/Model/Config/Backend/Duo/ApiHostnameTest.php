@@ -40,7 +40,7 @@ class ApiHostnameTest extends TestCase
         $this->model->beforeSave();
     }
 
-    public function valuesDataProvider()
+    public static function valuesDataProvider()
     {
         return [
             ['', true],

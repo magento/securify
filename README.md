@@ -11,9 +11,9 @@ disclosure practices.
 
 - Complete documentation located on the project [wiki pages](https://github.com/magento/security-package/wiki):
     - How to start local development described in the [installation guide](https://github.com/magento/security-package/wiki/Metapackage-Installation-Guide)
-    - Two-factor authentication [user guide](https://docs.magento.com/user-guide/stores/security-two-factor-authentication.html) and [technical guide](https://developer.adobe.com/commerce/testing/functional-testing-framework/two-factor-authentication/).
-    - Google ReCAPTCHA [user guide](https://docs.magento.com/user-guide/stores/security-google-recaptcha.html) and [technical guide](https://experienceleague.adobe.com/docs/commerce-admin/systems/security/captcha/security-google-recaptcha.html).
-    - Security.txt [user guide](https://docs.magento.com/user-guide/configuration/security/security-txt.html) and [technical guide](https://experienceleague.adobe.com/docs/commerce-operations/configuration-guide/security/security-txt.html).
+    - Two-factor authentication [user guide](https://experienceleague.adobe.com/en/docs/commerce-admin/systems/security/2fa/security-two-factor-authentication) and [technical guide](https://developer.adobe.com/commerce/testing/functional-testing-framework/two-factor-authentication/).
+    - Google ReCAPTCHA [user guide](https://experienceleague.adobe.com/en/docs/commerce-admin/systems/security/captcha/security-google-recaptcha) and [technical guide](https://experienceleague.adobe.com/docs/commerce-admin/systems/security/captcha/security-google-recaptcha.html).
+    - Security.txt [user guide](https://experienceleague.adobe.com/en/docs/commerce-admin/config/security/security-txt) and [technical guide](https://experienceleague.adobe.com/docs/commerce-operations/configuration-guide/security/security-txt.html).
 
 ## Community Engineering Slack
 
