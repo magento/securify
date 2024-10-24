@@ -15,6 +15,7 @@ use Magento\Framework\UrlInterface;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
 use Duo\DuoUniversal\Client;
+use DuoAPI\Auth as DuoAuth;
 
 /**
  * Duo Security engine
@@ -57,6 +58,16 @@ class DuoSecurity implements EngineInterface
     public const XML_PATH_API_HOSTNAME = 'twofactorauth/duo/api_hostname';
 
     /**
+     * Configuration XML path for integration key
+     */
+    public const XML_PATH_IKEY = 'two_factor_auth/duo/integration_key';
+
+    /**
+     *  Configuration XML path for secret key
+     */
+    public const XML_PATH_SKEY = 'two_factor_auth/duo/secret_key';
+
+    /**
      * Configuration path for Duo Mode
      */
     public const DUO_FAILMODE = 'twofactorauth/duo/duo_failmode';
@@ -70,6 +81,11 @@ class DuoSecurity implements EngineInterface
      * @var Client
      */
     private $client;
+
+    /**
+     * @var DuoAuth
+     */
+    private $duoAuth;
 
     /**
      * @var EncryptorInterface
@@ -108,6 +124,11 @@ class DuoSecurity implements EngineInterface
             $this->getClientSecret(), // Replace with your actual client secret
             $this->getApiHostname(), // Replace with your actual API host
             $this->getCallbackUrl()
+        );
+        $this->duoAuth = new DuoAuth(
+            $this->getIkey(),
+            $this->getSkey(),
+            $this->getApiHostname()
         );
     }
 
@@ -159,6 +180,26 @@ class DuoSecurity implements EngineInterface
     private function getCallbackUrl(): string
     {
         return $this->urlBuilder->getUrl('tfa/duo/authpost');
+    }
+
+    /**
+     * Get Integration Key
+     *
+     * @return string
+     */
+    private function getIkey(): string
+    {
+        return $this->scopeConfig->getValue(static::XML_PATH_IKEY) ?? '';
+    }
+
+    /**
+     * Get Secret Key
+     *
+     * @return string
+     */
+    private function getSkey(): string
+    {
+        return $this->encryptor->decrypt($this->scopeConfig->getValue(static::XML_PATH_SKEY)) ?? '';
     }
 
     /**
@@ -223,5 +264,23 @@ class DuoSecurity implements EngineInterface
     public function healthCheck(): void
     {
         $this->client->healthCheck();
+    }
+
+    /**
+     * @param $username
+     * @param $valid_secs
+     * @return mixed
+     */
+    public function enrollNewUser($username = null, $valid_secs = null) {
+        $enrolledUserData =  $this->duoAuth->enroll($username, $valid_secs);
+        return $enrolledUserData;
+    }
+
+    public function checkAuth($user_id, $ipaddr= null, $trusted_device_token = null, $username = true) {
+        $this->duoAuth->preauth($user_id, $ipaddr= null, $trusted_device_token = null, $username = true);
+    }
+
+    public function duoAuthorize($user_identifier, $factor, $factor_params, $ipaddr = null, $async = false) {
+        return $this->duoAuth->auth($user_identifier, $factor, $factor_params, $ipaddr = null, $async = false);
     }
 }

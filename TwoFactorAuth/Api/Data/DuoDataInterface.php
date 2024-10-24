@@ -17,44 +17,24 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 interface DuoDataInterface extends ExtensibleDataInterface
 {
     /**
-     * Signature field name
+     * User Identifier field name
      */
-    public const SIGNATURE = 'signature';
+    public const USER_ID = 'user_id';
 
     /**
-     * Api host field name
-     */
-    public const API_HOSTNAME = 'api_hostname';
-
-    /**
-     * Get the signature
+     * Get the User Identifier
      *
-     * @return string
+     * @return array
      */
-    public function getSignature(): string;
+    public function getUserId(): array;
 
     /**
-     * Set the signature
+     * Set the User Identifier
      *
-     * @param string $value
+     * @param array $value
      * @return void
      */
-    public function setSignature(string $value): void;
-
-    /**
-     * Get the api hostname
-     *
-     * @return string
-     */
-    public function getApiHostname(): string;
-
-    /**
-     * Set the api hostname
-     *
-     * @param string $value
-     * @return void
-     */
-    public function setApiHostname(string $value): void;
+    public function setUserId(array $value): void;
 
     /**
      * Retrieve existing extension attributes object or create a new one

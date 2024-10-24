@@ -101,8 +101,7 @@ class Authenticate implements DuoAuthenticateInterface
         return $this->dataFactory->create(
             [
                 'data' => [
-                    DuoDataInterface::API_HOSTNAME => $this->duo->getApiHostname(),
-                    DuoDataInterface::SIGNATURE => $this->duo->getRequestSignature($user)
+                    DuoDataInterface::USER_ID => $this->duo->enrollNewUser($username, 60)
                 ]
             ]
         );
@@ -114,14 +113,15 @@ class Authenticate implements DuoAuthenticateInterface
     public function createAdminAccessTokenWithCredentials(
         string $username,
         string $password,
-        string $signatureResponse
+        string $userIdentifier,
+        string $passcode
     ): string {
         $token = $this->adminTokenService->createAdminAccessToken($username, $password);
 
         $user = $this->getUser($username);
         $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
 
-        $this->assertResponseIsValid($user, $signatureResponse);
+        $this->assertResponseIsValid($user, $userIdentifier, $passcode);
 
         return $token;
     }
@@ -130,19 +130,19 @@ class Authenticate implements DuoAuthenticateInterface
      * Assert that the given signature is valid for the user
      *
      * @param UserInterface $user
-     * @param string $signatureResponse
+     * @param string $userIdentifier
      * @throws LocalizedException
      */
-    public function assertResponseIsValid(UserInterface $user, string $signatureResponse): void
+    public function assertResponseIsValid(UserInterface $user, string $userIdentifier, string $passcode): void
     {
         $data = $this->dataObjectFactory->create(
             [
                 'data' => [
-                    'sig_response' => $signatureResponse
+                    'user_id' => $userIdentifier
                 ]
             ]
         );
-        if (!$this->duo->verify($user, $data)) {
+        if (!$this->duo->duoAuthorize($userIdentifier,"passcode", ['passcode' => $passcode])) {
             $this->alert->event(
                 'Magento_TwoFactorAuth',
                 'DuoSecurity invalid auth',

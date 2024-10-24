@@ -67,7 +67,7 @@ class Configure implements DuoConfigureInterface
     }
 
     /**
-     * @inheritDoc
+     * @inheritDoc  a user: DUWQ5DZ7ZVV3YUY4WCJX
      */
     public function getConfigurationData(string $tfaToken): DuoDataInterface
     {
@@ -76,8 +76,7 @@ class Configure implements DuoConfigureInterface
         return $this->dataFactory->create(
             [
                 'data' => [
-                    DuoDataInterface::API_HOSTNAME => $this->duo->getApiHostname(),
-                    DuoDataInterface::SIGNATURE => $this->duo->getRequestSignature($user)
+                    DuoDataInterface::USER_ID => $this->duo->enrollNewUser($user->getUserName(), 60)
                 ]
             ]
         );
@@ -86,12 +85,12 @@ class Configure implements DuoConfigureInterface
     /**
      * @inheritDoc
      */
-    public function activate(string $tfaToken, string $signatureResponse): void
+    public function activate(string $tfaToken, string $userIdentifier): void
     {
         $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
         $userId = (int)$user->getId();
 
-        $this->authenticate->assertResponseIsValid($user, $signatureResponse);
+        $this->authenticate->assertResponseIsValid($user, $userIdentifier);
         $this->tfa->getProviderByCode(DuoSecurity::CODE)
             ->activate($userId);
     }

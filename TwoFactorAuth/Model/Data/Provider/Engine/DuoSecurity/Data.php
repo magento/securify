@@ -20,33 +20,17 @@ class Data extends AbstractExtensibleModel implements DuoDataInterface
     /**
      * @inheritDoc
      */
-    public function getSignature(): string
+    public function getUserId(): array
     {
-        return (string)$this->getData(self::SIGNATURE);
+        return $this->getData(self::USER_ID);
     }
 
     /**
      * @inheritDoc
      */
-    public function setSignature(string $value): void
+    public function setUserId(array $value): void
     {
-        $this->setData(self::SIGNATURE, $value);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getApiHostname(): string
-    {
-        return (string)$this->getData(self::API_HOSTNAME);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setApiHostname(string $value): void
-    {
-        $this->setData(self::API_HOSTNAME, $value);
+        $this->setData(self::USER_ID, $value);
     }
 
     /**

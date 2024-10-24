@@ -34,12 +34,14 @@ interface DuoAuthenticateInterface
      *
      * @param string $username
      * @param string $password
-     * @param string $signatureResponse
+     * @param string $userIdentifier
+     * @param string $passcode
      * @return string
      */
     public function createAdminAccessTokenWithCredentials(
         string $username,
         string $password,
-        string $signatureResponse
+        string $userIdentifier,
+        string $passcode
     ): string;
 }

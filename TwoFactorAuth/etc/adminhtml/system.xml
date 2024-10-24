@@ -48,7 +48,7 @@
             </group>
             <group id="duo" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0"
                    showInStore="0">
-                <label>Duo Security</label>
+                <label>Duo Security Universal Prompt</label>
                 <field id="client_id" translate="label comment" type="text" sortOrder="20" showInDefault="1"
                        showInWebsite="0" showInStore="0">
                     <label>Client Id</label>
@@ -67,6 +67,15 @@
                        showInWebsite="0" showInStore="0">
                     <label>Duo Failmode</label>
                     <source_model>Magento\TwoFactorAuth\Model\Config\Source\DuoFailmode</source_model>
+                </field>
+                <field id="integration_key" translate="label comment" type="text" sortOrder="60" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Integration Key</label>
+                </field>
+                <field id="secret_key" translate="label comment" type="obscure" sortOrder="70" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Secret Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
             </group>
 

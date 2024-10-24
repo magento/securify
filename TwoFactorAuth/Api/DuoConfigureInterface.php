@@ -31,8 +31,8 @@ interface DuoConfigureInterface
      * Activate the provider and get an admin token
      *
      * @param string $tfaToken
-     * @param string $signatureResponse
+     * @param string $userIdentifier
      * @return void
      */
-    public function activate(string $tfaToken, string $signatureResponse): void;
+    public function activate(string $tfaToken, string $userIdentifier): void;
 }

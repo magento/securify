@@ -18,7 +18,6 @@
             </authy>
             <duo>
                 <secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
-                <application_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
             </duo>
             <google>
                 <leeway backend_model="Magento\TwoFactorAuth\Model\Config\Backend\Leeway">29</leeway>
