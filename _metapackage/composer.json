@@ -26,6 +26,7 @@
         "magento/module-re-captcha-webapi-rest": "*",
         "magento/module-re-captcha-webapi-graph-ql": "*",
         "magento/module-re-captcha-webapi-ui": "*",
+        "magento/module-re-captcha-wishlist": "*",
         "magento/module-securitytxt": "*",
         "magento/module-two-factor-auth": "*",
         "google/recaptcha": "^1.2",
