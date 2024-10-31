@@ -35,6 +35,21 @@
                     <label>Configuration Email URL for Web API</label>
                     <comment>This can be used to override the default email configuration link that is sent when using the Magento Web API's to authenticate. Use the placeholder :tfat to indicate where the token should be injected</comment>
                 </field>
+                <field canRestore="1" id="twofactorauth_retry" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Retry attempt limit for Two-Factor Authentication</label>
+                    <comment>
+                        Determines how many times a user can try to complete the 2FA process before being temporarily locked out.
+                    </comment>
+                </field>
+                <field canRestore="1" id="auth_lock_expire" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Two-Factor Authentication lockout time (seconds)</label>
+                    <comment>
+                        Determines how long a user is locked out if they reach the threshold defined above.
+                        Please enter at least 120 and at most 1800 (30 minutes).
+                    </comment>
+                </field>
             </group>
             <group id="google" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0"
                    showInStore="0">

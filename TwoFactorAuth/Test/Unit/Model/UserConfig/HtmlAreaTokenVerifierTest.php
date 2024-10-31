@@ -95,7 +95,7 @@ class HtmlAreaTokenVerifierTest extends TestCase
      *
      * @return array
      */
-    public function getTokenRequestData(): array
+    public static function getTokenRequestData(): array
     {
         return [
             'token in query' => [

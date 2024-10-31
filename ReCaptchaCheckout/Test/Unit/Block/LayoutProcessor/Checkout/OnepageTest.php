@@ -119,7 +119,7 @@ class OnepageTest extends TestCase
         $this->assertSame($expected, $actual);
     }
 
-    public function processDataProvider(): array
+    public static function processDataProvider(): array
     {
         return [
             [

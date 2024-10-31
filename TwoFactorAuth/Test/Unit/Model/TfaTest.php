@@ -142,7 +142,7 @@ class TfaTest extends TestCase
      *
      * @return array
      */
-    public function getForcedProvidersDataSet(): array
+    public static function getForcedProvidersDataSet(): array
     {
         return [
             'not defined' => [

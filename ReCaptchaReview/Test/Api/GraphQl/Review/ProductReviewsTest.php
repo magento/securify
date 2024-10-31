@@ -70,7 +70,7 @@ class ProductReviewsTest extends GraphQlAbstract
     /**
      * @return array
      */
-    public function customerDataProvider(): array
+    public static function customerDataProvider(): array
     {
         return [
             'Guest' => ['John Doe', true],
