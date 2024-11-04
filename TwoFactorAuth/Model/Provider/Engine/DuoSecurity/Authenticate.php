@@ -101,7 +101,7 @@ class Authenticate implements DuoAuthenticateInterface
         return $this->dataFactory->create(
             [
                 'data' => [
-                    DuoDataInterface::USER_ID => $this->duo->enrollNewUser($username, 60)
+                    DuoDataInterface::USER_IDENTIFIER => $this->duo->enrollNewUser($username, 60)
                 ]
             ]
         );
@@ -135,13 +135,6 @@ class Authenticate implements DuoAuthenticateInterface
      */
     public function assertResponseIsValid(UserInterface $user, string $userIdentifier, string $passcode): void
     {
-        $data = $this->dataObjectFactory->create(
-            [
-                'data' => [
-                    'user_id' => $userIdentifier
-                ]
-            ]
-        );
         if (!$this->duo->duoAuthorize($userIdentifier,"passcode", ['passcode' => $passcode])) {
             $this->alert->event(
                 'Magento_TwoFactorAuth',

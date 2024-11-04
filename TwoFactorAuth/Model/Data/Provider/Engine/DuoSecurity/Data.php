@@ -20,17 +20,17 @@ class Data extends AbstractExtensibleModel implements DuoDataInterface
     /**
      * @inheritDoc
      */
-    public function getUserId(): array
+    public function getUserIdentifier(): array
     {
-        return $this->getData(self::USER_ID);
+        return $this->getData(self::USER_IDENTIFIER);
     }
 
     /**
      * @inheritDoc
      */
-    public function setUserId(array $value): void
+    public function setUserIdentifier(array $value): void
     {
-        $this->setData(self::USER_ID, $value);
+        $this->setData(self::USER_IDENTIFIER, $value);
     }
 
     /**

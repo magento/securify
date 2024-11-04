@@ -76,7 +76,7 @@ class Configure implements DuoConfigureInterface
         return $this->dataFactory->create(
             [
                 'data' => [
-                    DuoDataInterface::USER_ID => $this->duo->enrollNewUser($user->getUserName(), 60)
+                    DuoDataInterface::USER_IDENTIFIER => $this->duo->enrollNewUser($user->getUserName(), 60)
                 ]
             ]
         );
@@ -85,12 +85,12 @@ class Configure implements DuoConfigureInterface
     /**
      * @inheritDoc
      */
-    public function activate(string $tfaToken, string $userIdentifier): void
+    public function activate(string $tfaToken, string $userIdentifier, string $passcode): void
     {
         $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
         $userId = (int)$user->getId();
 
-        $this->authenticate->assertResponseIsValid($user, $userIdentifier);
+        $this->authenticate->assertResponseIsValid($user, $userIdentifier, $passcode);
         $this->tfa->getProviderByCode(DuoSecurity::CODE)
             ->activate($userId);
     }

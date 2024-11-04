@@ -19,14 +19,14 @@ interface DuoDataInterface extends ExtensibleDataInterface
     /**
      * User Identifier field name
      */
-    public const USER_ID = 'user_id';
+    public const USER_IDENTIFIER = 'user_identifier';
 
     /**
      * Get the User Identifier
      *
      * @return array
      */
-    public function getUserId(): array;
+    public function getUserIdentifier(): array;
 
     /**
      * Set the User Identifier
@@ -34,7 +34,7 @@ interface DuoDataInterface extends ExtensibleDataInterface
      * @param array $value
      * @return void
      */
-    public function setUserId(array $value): void;
+    public function setUserIdentifier(array $value): void;
 
     /**
      * Retrieve existing extension attributes object or create a new one

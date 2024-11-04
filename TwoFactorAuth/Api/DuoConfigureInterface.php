@@ -32,7 +32,8 @@ interface DuoConfigureInterface
      *
      * @param string $tfaToken
      * @param string $userIdentifier
+     * @param string $passcode
      * @return void
      */
-    public function activate(string $tfaToken, string $userIdentifier): void;
+    public function activate(string $tfaToken, string $userIdentifier, string $passcode): void;
 }

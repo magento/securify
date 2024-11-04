@@ -121,8 +121,8 @@ class DuoSecurity implements EngineInterface
         $this->formKey = $formKey;
         $this->client = new Client(
             $this->getClientId(),
-            $this->getClientSecret(), // Replace with your actual client secret
-            $this->getApiHostname(), // Replace with your actual API host
+            $this->getClientSecret(),
+            $this->getApiHostname(),
             $this->getCallbackUrl()
         );
         $this->duoAuth = new DuoAuth(
@@ -267,20 +267,40 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * @param $username
-     * @param $valid_secs
+     * Enroll a new user.
+     *
+     * @param string|null $username
+     * @param int|null $valid_secs
      * @return mixed
      */
     public function enrollNewUser($username = null, $valid_secs = null) {
-        $enrolledUserData =  $this->duoAuth->enroll($username, $valid_secs);
-        return $enrolledUserData;
+        return $this->duoAuth->enroll($username, $valid_secs);
     }
 
-    public function checkAuth($user_id, $ipaddr= null, $trusted_device_token = null, $username = true) {
-        $this->duoAuth->preauth($user_id, $ipaddr= null, $trusted_device_token = null, $username = true);
+    /**
+     * Check authentication.
+     *
+     * @param string $user_id
+     * @param string|null $ipaddr
+     * @param string|null $trusted_device_token
+     * @param bool $username
+     * @return void
+     */
+    public function checkAuth($user_id, $ipaddr = null, $trusted_device_token = null, $username = true) {
+        $this->duoAuth->preauth($user_id, $ipaddr, $trusted_device_token, $username);
     }
 
+    /**
+     * Authorize a user with Duo.
+     *
+     * @param string $user_identifier
+     * @param string $factor
+     * @param array $factor_params
+     * @param string|null $ipaddr
+     * @param bool $async
+     * @return array|void
+     */
     public function duoAuthorize($user_identifier, $factor, $factor_params, $ipaddr = null, $async = false) {
-        return $this->duoAuth->auth($user_identifier, $factor, $factor_params, $ipaddr = null, $async = false);
+        return $this->duoAuth->auth($user_identifier, $factor, $factor_params, $ipaddr, $async);
     }
 }
