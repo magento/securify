@@ -17,26 +17,6 @@ use Magento\Framework\Api\ExtensibleDataInterface;
 interface DuoDataInterface extends ExtensibleDataInterface
 {
     /**
-     * User Identifier field name
-     */
-    public const USER_IDENTIFIER = 'user_identifier';
-
-    /**
-     * Get the User Identifier
-     *
-     * @return array
-     */
-    public function getUserIdentifier(): array;
-
-    /**
-     * Set the User Identifier
-     *
-     * @param array $value
-     * @return void
-     */
-    public function setUserIdentifier(array $value): void;
-
-    /**
      * Retrieve existing extension attributes object or create a new one
      *
      * Used fully qualified namespaces in annotations for proper work of extension interface/class code generation

@@ -11,6 +11,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
@@ -38,6 +39,11 @@ class DuoSecurity implements EngineInterface
     public const AUTH_PREFIX = 'AUTH';
 
     /**
+     * Duo auth suffix
+     */
+    public const AUTH_SUFFIX = 'DUOAUTH';
+
+    /**
      * Configuration XML path for enabled flag
      */
     public const XML_PATH_ENABLED = 'twofactorauth/duo/enabled';
@@ -60,12 +66,12 @@ class DuoSecurity implements EngineInterface
     /**
      * Configuration XML path for integration key
      */
-    public const XML_PATH_IKEY = 'two_factor_auth/duo/integration_key';
+    public const XML_PATH_IKEY = 'twofactorauth/duo/integration_key';
 
     /**
      *  Configuration XML path for secret key
      */
-    public const XML_PATH_SKEY = 'two_factor_auth/duo/secret_key';
+    public const XML_PATH_SKEY = 'twofactorauth/duo/secret_key';
 
     /**
      * Configuration path for Duo Mode
@@ -103,22 +109,30 @@ class DuoSecurity implements EngineInterface
     private $formKey;
 
     /**
+     * @var SessionManagerInterface
+     */
+    private $session;
+
+    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param EncryptorInterface $encryptor
      * @param UrlInterface $urlBuilder
      * @param FormKey $formKey
+     * @param SessionManagerInterface $session
      * @throws \Duo\DuoUniversal\DuoException
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
-        FormKey $formKey
+        FormKey $formKey,
+        SessionManagerInterface $session
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
         $this->formKey = $formKey;
+        $this->session = $session;
         $this->client = new Client(
             $this->getClientId(),
             $this->getClientSecret(),
@@ -189,7 +203,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getIkey(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_IKEY) ?? '';
+        return $this->scopeConfig->getValue(static::XML_PATH_IKEY);
     }
 
     /**
@@ -199,7 +213,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getSkey(): string
     {
-        return $this->encryptor->decrypt($this->scopeConfig->getValue(static::XML_PATH_SKEY)) ?? '';
+        return $this->scopeConfig->getValue(static::XML_PATH_SKEY);
     }
 
     /**
@@ -214,12 +228,14 @@ class DuoSecurity implements EngineInterface
         if (empty($savedState) || empty($username)) {
             return false;
         }
-        if ($this->formKey->getFormKey().'lavijain' != $savedState) {
+        if ($this->formKey->getFormKey().static::AUTH_SUFFIX != $savedState) {
             return false;
         }
 
         try {
             $decoded_token = $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
+            // Save the token in the session for later use
+            $this->session->setData('duo_token', $decoded_token);
         } catch (LocalizedException $e) {
             return false;
         }
@@ -243,7 +259,7 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * Generate URI to redirect to for the Duo prompt.
+     * Generate URI to redirect to for the Duo Universal prompt.
      *
      * @param string $username
      * @param string $state
@@ -251,12 +267,11 @@ class DuoSecurity implements EngineInterface
      */
     public function initiateAuth($username, string $state): string
     {
-        $authUrl = $this->client->createAuthUrl($username, $state);
-        return $authUrl;
+        return $this->client->createAuthUrl($username, $state);
     }
 
     /**
-     * Health check for Duo
+     * Health check for Duo Universal prompt.
      *
      * @return void
      * @throws \Duo\DuoUniversal\DuoException
@@ -267,40 +282,45 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * Enroll a new user.
+     * Enroll a new user for Duo Auth API.
      *
      * @param string|null $username
-     * @param int|null $valid_secs
+     * @param int|null $validSecs
      * @return mixed
      */
-    public function enrollNewUser($username = null, $valid_secs = null) {
-        return $this->duoAuth->enroll($username, $valid_secs);
+    public function enrollNewUser($username = null, $validSecs = null) {
+        return $this->duoAuth->enroll($username, $validSecs);
     }
 
     /**
-     * Check authentication.
+     * Check authentication for Duo Auth API.
      *
-     * @param string $user_id
-     * @param string|null $ipaddr
-     * @param string|null $trusted_device_token
+     * @param string $userIdentifier
+     * @param string|null $ipAddr
+     * @param string|null $trustedDeviceToken
      * @param bool $username
-     * @return void
+     * @return string
      */
-    public function checkAuth($user_id, $ipaddr = null, $trusted_device_token = null, $username = true) {
-        $this->duoAuth->preauth($user_id, $ipaddr, $trusted_device_token, $username);
+    public function assertUserIsValid($userIdentifier, $ipAddr = null, $trustedDeviceToken = null, $username = true) {
+       $response =  $this->duoAuth->preauth($userIdentifier, $ipAddr, $trustedDeviceToken, $username);
+        return $response['response']['response']['result'];
     }
 
     /**
-     * Authorize a user with Duo.
+     * Authorize a user with Duo Auth API.
      *
-     * @param string $user_identifier
+     * @param string $userIdentifier
      * @param string $factor
-     * @param array $factor_params
-     * @param string|null $ipaddr
+     * @param array $factorParams
+     * @param string|null $ipAddr
      * @param bool $async
-     * @return array|void
+     * @return array
      */
-    public function duoAuthorize($user_identifier, $factor, $factor_params, $ipaddr = null, $async = false) {
-        return $this->duoAuth->auth($user_identifier, $factor, $factor_params, $ipaddr, $async);
+    public function authorizeUser($userIdentifier, $factor, $factorParams, $ipAddr = null, $async = false) {
+        $response = $this->duoAuth->auth($userIdentifier, $factor, $factorParams, $ipAddr, $async);
+        return [
+            'status' => $response['response']['response']['status'],
+            'msg' => $response['response']['response']['status_msg']
+        ];
     }
 }

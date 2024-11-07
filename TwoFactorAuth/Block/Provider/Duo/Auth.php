@@ -81,7 +81,7 @@ class Auth extends Template
         if ($user) {
             $username = $user->getUserName();
         }
-        $prompt_uri = $this->duoSecurity->initiateAuth($username, $this->getFormKey().'lavijain');
+        $prompt_uri = $this->duoSecurity->initiateAuth($username, $this->getFormKey().DuoSecurity::AUTH_SUFFIX);
         $this->jsLayout['components']['tfa-auth']['redirectUrl'] = $prompt_uri;
         return parent::getJsLayout();
     }

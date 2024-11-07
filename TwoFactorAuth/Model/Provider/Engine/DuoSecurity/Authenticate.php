@@ -91,29 +91,9 @@ class Authenticate implements DuoAuthenticateInterface
     /**
      * @inheritDoc
      */
-    public function getAuthenticateData(string $username, string $password): DuoDataInterface
-    {
-        $this->adminTokenService->createAdminAccessToken($username, $password);
-
-        $user = $this->getUser($username);
-        $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
-
-        return $this->dataFactory->create(
-            [
-                'data' => [
-                    DuoDataInterface::USER_IDENTIFIER => $this->duo->enrollNewUser($username, 60)
-                ]
-            ]
-        );
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function createAdminAccessTokenWithCredentials(
         string $username,
         string $password,
-        string $userIdentifier,
         string $passcode
     ): string {
         $token = $this->adminTokenService->createAdminAccessToken($username, $password);
@@ -121,7 +101,7 @@ class Authenticate implements DuoAuthenticateInterface
         $user = $this->getUser($username);
         $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
 
-        $this->assertResponseIsValid($user, $userIdentifier, $passcode);
+        $this->assertResponseIsValid($user, $username, $passcode);
 
         return $token;
     }
@@ -130,15 +110,16 @@ class Authenticate implements DuoAuthenticateInterface
      * Assert that the given signature is valid for the user
      *
      * @param UserInterface $user
-     * @param string $userIdentifier
+     * @param string $username
      * @throws LocalizedException
      */
-    public function assertResponseIsValid(UserInterface $user, string $userIdentifier, string $passcode): void
+    public function assertResponseIsValid(UserInterface $user, $username, string $passcode): void
     {
-        if (!$this->duo->duoAuthorize($userIdentifier,"passcode", ['passcode' => $passcode])) {
+        $duoAuthResponse = $this->duo->authorizeUser($username,"passcode", ['passcode' => $passcode]);
+        if ($duoAuthResponse['status'] !== 'allow') {
             $this->alert->event(
                 'Magento_TwoFactorAuth',
-                'DuoSecurity invalid auth',
+                'DuoSecurity invalid auth '. $duoAuthResponse['msg'],
                 AlertInterface::LEVEL_WARNING,
                 $user->getUserName()
             );

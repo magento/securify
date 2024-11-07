@@ -18,22 +18,6 @@ use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
 class Data extends AbstractExtensibleModel implements DuoDataInterface
 {
     /**
-     * @inheritDoc
-     */
-    public function getUserIdentifier(): array
-    {
-        return $this->getData(self::USER_IDENTIFIER);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setUserIdentifier(array $value): void
-    {
-        $this->setData(self::USER_IDENTIFIER, $value);
-    }
-
-    /**
      * Retrieve existing extension attributes object or create a new one
      *
      * Used fully qualified namespaces in annotations for proper work of extension interface/class code generation

@@ -18,30 +18,16 @@ use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
 interface DuoAuthenticateInterface
 {
     /**
-     * Get the information required to configure duo
-     *
-     * @param string $username
-     * @param string $password
-     * @return \Magento\TwoFactorAuth\Api\Data\DuoDataInterface
-     */
-    public function getAuthenticateData(
-        string $username,
-        string $password
-    ): DuoDataInterface;
-
-    /**
      * Authenticate and get an admin token
      *
      * @param string $username
      * @param string $password
-     * @param string $userIdentifier
      * @param string $passcode
      * @return string
      */
     public function createAdminAccessTokenWithCredentials(
         string $username,
         string $password,
-        string $userIdentifier,
         string $passcode
     ): string;
 }

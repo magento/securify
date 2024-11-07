@@ -21,19 +21,16 @@ interface DuoConfigureInterface
      * Get the information required to configure duo
      *
      * @param string $tfaToken
-     * @return \Magento\TwoFactorAuth\Api\Data\DuoDataInterface
      */
     public function getConfigurationData(
         string $tfaToken
-    ): DuoDataInterface;
+    );
 
     /**
      * Activate the provider and get an admin token
      *
      * @param string $tfaToken
-     * @param string $userIdentifier
-     * @param string $passcode
      * @return void
      */
-    public function activate(string $tfaToken, string $userIdentifier, string $passcode): void;
+    public function activate(string $tfaToken): void;
 }
