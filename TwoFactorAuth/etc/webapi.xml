@@ -176,13 +176,6 @@
         </resources>
     </route>
 
-    <route url="/V1/tfa/provider/duo_security/get-authentication-data" method="POST">
-        <service class="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" method="getAuthenticateData"/>
-        <resources>
-            <resource ref="anonymous" />
-        </resources>
-    </route>
-
     <route url="/V1/tfa/provider/duo_security/authenticate" method="POST">
         <service class="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" method="createAdminAccessTokenWithCredentials"/>
         <resources>

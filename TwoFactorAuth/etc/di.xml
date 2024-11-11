@@ -38,7 +38,6 @@
     <preference for="Magento\TwoFactorAuth\Api\U2fKeyAuthenticateInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\U2fKey\Authenticate"/>
     <preference for="Magento\TwoFactorAuth\Api\DuoConfigureInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity\Configure"/>
     <preference for="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity\Authenticate"/>
-    <preference for="Magento\TwoFactorAuth\Api\Data\DuoDataInterface" type="Magento\TwoFactorAuth\Model\Data\Provider\Engine\DuoSecurity\Data"/>
     <preference for="Magento\TwoFactorAuth\Api\U2fKeyConfigReaderInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\U2fKey\ConfigReader"/>
 
     <type name="Magento\Framework\Console\CommandListInterface">

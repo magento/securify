@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Api;
 
-use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
-
 /**
  * Represents configuration for the duo security provider
  *
@@ -18,9 +16,10 @@ use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
 interface DuoConfigureInterface
 {
     /**
-     * Get the information required to configure duo
+     * configure duo for first time user
      *
      * @param string $tfaToken
+     * @return void
      */
     public function getConfigurationData(
         string $tfaToken

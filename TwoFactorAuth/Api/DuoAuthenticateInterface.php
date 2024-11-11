@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Api;
 
-use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
-
 /**
  * Represents authentication for the duo security provider
  *

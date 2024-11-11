@@ -12,8 +12,6 @@ use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Integration\Api\AdminTokenServiceInterface;
-use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
-use Magento\TwoFactorAuth\Api\Data\DuoDataInterfaceFactory;
 use Magento\TwoFactorAuth\Api\DuoAuthenticateInterface;
 use Magento\TwoFactorAuth\Model\AlertInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
@@ -47,11 +45,6 @@ class Authenticate implements DuoAuthenticateInterface
     private $adminTokenService;
 
     /**
-     * @var DuoDataInterfaceFactory
-     */
-    private $dataFactory;
-
-    /**
      * @var DataObjectFactory
      */
     private $dataObjectFactory;
@@ -66,7 +59,6 @@ class Authenticate implements DuoAuthenticateInterface
      * @param AlertInterface $alert
      * @param DuoSecurity $duo
      * @param AdminTokenServiceInterface $adminTokenService
-     * @param DuoDataInterfaceFactory $dataFactory
      * @param DataObjectFactory $dataObjectFactory
      * @param UserAuthenticator $userAuthenticator
      */
@@ -75,7 +67,6 @@ class Authenticate implements DuoAuthenticateInterface
         AlertInterface $alert,
         DuoSecurity $duo,
         AdminTokenServiceInterface $adminTokenService,
-        DuoDataInterfaceFactory $dataFactory,
         DataObjectFactory $dataObjectFactory,
         UserAuthenticator $userAuthenticator
     ) {
@@ -83,7 +74,6 @@ class Authenticate implements DuoAuthenticateInterface
         $this->alert = $alert;
         $this->duo = $duo;
         $this->adminTokenService = $adminTokenService;
-        $this->dataFactory = $dataFactory;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->userAuthenticator = $userAuthenticator;
     }
