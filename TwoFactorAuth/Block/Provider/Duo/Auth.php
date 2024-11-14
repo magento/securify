@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -37,6 +37,7 @@ class Auth extends Template
      * @param Template\Context $context
      * @param Session $session
      * @param DuoSecurity $duoSecurity
+     * @param ManagerInterface $messageManager
      * @param array $data
      */
     public function __construct(
@@ -75,7 +76,6 @@ class Auth extends Template
                 return $this->_redirect('adminhtml');
             }
         }
-
 
         $user = $this->session->getUser();
         if ($user) {

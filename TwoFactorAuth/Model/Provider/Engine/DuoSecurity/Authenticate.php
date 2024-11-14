@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -97,15 +97,17 @@ class Authenticate implements DuoAuthenticateInterface
     }
 
     /**
-     * Assert that the given signature is valid for the user
+     * Assert that the response from Duo is valid
      *
      * @param UserInterface $user
      * @param string $username
+     * @param string $passcode
+     * @return void
      * @throws LocalizedException
      */
     public function assertResponseIsValid(UserInterface $user, $username, string $passcode): void
     {
-        $duoAuthResponse = $this->duo->authorizeUser($username,"passcode", ['passcode' => $passcode]);
+        $duoAuthResponse = $this->duo->authorizeUser($username, "passcode", ['passcode' => $passcode]);
         if ($duoAuthResponse['status'] !== 'allow') {
             $this->alert->event(
                 'Magento_TwoFactorAuth',

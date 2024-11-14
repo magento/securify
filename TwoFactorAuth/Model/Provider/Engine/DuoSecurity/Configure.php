@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -73,7 +73,7 @@ class Configure implements DuoConfigureInterface
         $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
         $userId = (int)$user->getId();
 
-        if($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
+        if ($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
             $this->tfa->getProviderByCode(DuoSecurity::CODE)
                 ->activate($userId);
         }

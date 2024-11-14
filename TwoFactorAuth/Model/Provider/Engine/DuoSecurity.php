@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -288,7 +288,8 @@ class DuoSecurity implements EngineInterface
      * @param int|null $validSecs
      * @return mixed
      */
-    public function enrollNewUser($username = null, $validSecs = null) {
+    public function enrollNewUser($username = null, $validSecs = null)
+    {
         return $this->duoAuth->enroll($username, $validSecs);
     }
 
@@ -301,8 +302,9 @@ class DuoSecurity implements EngineInterface
      * @param bool $username
      * @return string
      */
-    public function assertUserIsValid($userIdentifier, $ipAddr = null, $trustedDeviceToken = null, $username = true) {
-       $response =  $this->duoAuth->preauth($userIdentifier, $ipAddr, $trustedDeviceToken, $username);
+    public function assertUserIsValid($userIdentifier, $ipAddr = null, $trustedDeviceToken = null, $username = true)
+    {
+        $response =  $this->duoAuth->preauth($userIdentifier, $ipAddr, $trustedDeviceToken, $username);
         return $response['response']['response']['result'];
     }
 
@@ -316,7 +318,8 @@ class DuoSecurity implements EngineInterface
      * @param bool $async
      * @return array
      */
-    public function authorizeUser($userIdentifier, $factor, $factorParams, $ipAddr = null, $async = false) {
+    public function authorizeUser($userIdentifier, $factor, $factorParams, $ipAddr = null, $async = false)
+    {
         $response = $this->duoAuth->auth($userIdentifier, $factor, $factorParams, $ipAddr, $async);
         return [
             'status' => $response['response']['response']['status'],
