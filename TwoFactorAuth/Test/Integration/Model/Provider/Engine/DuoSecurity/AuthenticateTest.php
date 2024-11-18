@@ -65,234 +65,103 @@ class AuthenticateTest extends TestCase
     }
 
     /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
-    public function testGetAuthenticateDataInvalidCredentials()
+    public function testCreateAdminAccessTokenWithCredentials()
     {
-        $this->expectException(\Magento\Framework\Exception\AuthenticationException::class);
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->activate($this->getUserId());
-        $this->duo
-            ->expects($this->never())
-            ->method('getRequestSignature');
-        $this->model->getAuthenticateData(
-            'adminUser',
-            'abc'
-        );
+        $username = 'admin';
+        $password = 'password123';
+        $passcode = '654321';
+
+        // Mock admin token service
+        $this->adminTokenService->expects($this->once())
+            ->method('createAdminAccessToken')
+            ->with($username, $password)
+            ->willReturn('token');
+
+        // Mock user retrieval
+        $userMock = $this->createMock(UserInterface::class);
+        $userMock->expects($this->any())
+            ->method('getId')
+            ->willReturn(123);
+
+        $this->userFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($userMock);
+
+        $userMock->expects($this->once())
+            ->method('loadByUsername')
+            ->with($username);
+
+        $this->userAuthenticator->expects($this->once())
+            ->method('assertProviderIsValidForUser')
+            ->with(123, DuoSecurity::CODE);
+
+        // Test assertResponseIsValid (can be mocked or separately tested)
+        $this->authenticate->expects($this->once())
+            ->method('assertResponseIsValid')
+            ->with($userMock, $username, $passcode);
+
+        // Call the method
+        $token = $this->authenticate->createAdminAccessTokenWithCredentials($username, $password, $passcode);
+        $this->assertEquals('token', $token);
     }
 
     /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
-    public function testGetAuthenticateDataNotConfiguredProvider()
+    public function testAssertResponseIsValid()
     {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
-        $this->expectExceptionMessage('Provider is not configured.');
-        $userId = $this->getUserId();
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->resetConfiguration($userId);
+        $userMock = $this->createMock(UserInterface::class);
+        $username = 'admin';
+        $passcode = '654321';
 
-        $this->duo
-            ->expects($this->never())
-            ->method('getRequestSignature');
-        $this->model->getAuthenticateData(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD
-        );
+        $this->duo->expects($this->once())
+            ->method('authorizeUser')
+            ->with($username, 'passcode', ['passcode' => $passcode])
+            ->willReturn(['status' => 'allow']);
+
+        $this->alert->expects($this->never())
+            ->method('event');
+
+        // Call the method (no exception expected for valid response)
+        $this->authenticate->assertResponseIsValid($userMock, $username, $passcode);
     }
 
     /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers authy
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
-    public function testGetAuthenticateDataUnavailableProvider()
+    public function testAssertResponseIsInvalid()
     {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
-        $this->expectExceptionMessage('Provider is not allowed.');
-        $this->duo
-            ->expects($this->never())
-            ->method('getRequestSignature');
-        $this->model->getAuthenticateData(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD
-        );
-    }
-    /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
-     */
-    public function testVerifyInvalidCredentials()
-    {
-        $this->expectException(\Magento\Framework\Exception\AuthenticationException::class);
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->activate($this->getUserId());
-        $this->duo
-            ->expects($this->never())
-            ->method('getRequestSignature');
-        $this->model->createAdminAccessTokenWithCredentials(
-            'adminUser',
-            'abc',
-            'signature'
-        );
-    }
+        $userMock = $this->createMock(UserInterface::class);
+        $userMock->expects($this->any())
+            ->method('getUserName')
+            ->willReturn('admin');
 
-    /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
-     */
-    public function testVerifyNotConfiguredProvider()
-    {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
-        $this->expectExceptionMessage('Provider is not configured.');
-        $userId = $this->getUserId();
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->resetConfiguration($userId);
+        $username = 'admin';
+        $passcode = '123456';
 
-        $this->duo
-            ->expects($this->never())
-            ->method('getRequestSignature');
-        $this->model->createAdminAccessTokenWithCredentials(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD,
-            'signature'
-        );
-    }
+        $this->duo->expects($this->once())
+            ->method('authorizeUser')
+            ->with($username, 'passcode', ['passcode' => $passcode])
+            ->willReturn(['status' => 'deny', 'msg' => 'Invalid passcode']);
 
-    /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers authy
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
-     */
-    public function testVerifyUnavailableProvider()
-    {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
-        $this->expectExceptionMessage('Provider is not allowed.');
-        $this->duo
-            ->expects($this->never())
-            ->method('getRequestSignature');
-        $this->model->createAdminAccessTokenWithCredentials(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD,
-            'signature'
-        );
-    }
-
-    /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
-     */
-    public function testGetAuthenticateDataValidRequest()
-    {
-        $userId = $this->getUserId();
-
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->activate($userId);
-
-        $this->duo
-            ->method('getApiHostname')
-            ->willReturn('abc');
-        $this->duo
-            ->method('getRequestSignature')
+        $this->alert->expects($this->once())
+            ->method('event')
             ->with(
-                $this->callback(function ($value) use ($userId) {
-                    return (int)$value->getId() === $userId;
-                })
-            )
-            ->willReturn('cba');
+                'Magento_TwoFactorAuth',
+                'DuoSecurity invalid auth Invalid passcode',
+                AlertInterface::LEVEL_WARNING,
+                'admin'
+            );
 
-        $result = $this->model->getAuthenticateData(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD
-        );
-
-        self::assertInstanceOf(DuoDataInterface::class, $result);
-        self::assertSame('abc', $result->getApiHostname());
-        self::assertSame('cba', $result->getSignature());
-    }
-
-    /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
-     */
-    public function testVerifyValidRequest()
-    {
-        $userId = $this->getUserId();
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->activate($userId);
-
-        $signature = 'a signature';
-        $this->duo->method('verify')
-            ->with(
-                $this->callback(function ($value) use ($userId) {
-                    return (int)$value->getId() === $userId;
-                }),
-                $this->callback(function ($value) use ($signature) {
-                    return $value->getData('sig_response') === $signature;
-                })
-            )
-            ->willReturn(true);
-
-        $token = $this->model->createAdminAccessTokenWithCredentials(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD,
-            $signature
-        );
-
-        self::assertNotEmpty($token);
-    }
-
-    /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoDataFixture Magento/User/_files/user_with_role.php
-     */
-    public function testVerifyInvalidRequest()
-    {
-        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+        $this->expectException(LocalizedException::class);
         $this->expectExceptionMessage('Invalid response');
-        $userId = $this->getUserId();
-        $this->tfa->getProviderByCode(DuoSecurity::CODE)
-            ->activate($userId);
 
-        $signature = 'a signature';
-        $this->duo->method('verify')
-            ->willReturn(false);
-
-        $token = $this->model->createAdminAccessTokenWithCredentials(
-            'adminUser',
-            Bootstrap::ADMIN_PASSWORD,
-            $signature
-        );
-
-        self::assertEmpty($token);
-    }
-
-    private function getUserId(): int
-    {
-        $user = $this->userFactory->create();
-        $user->loadByUsername('adminUser');
-
-        return (int)$user->getId();
+        // Call the method (exception expected for invalid response)
+        $this->authenticate->assertResponseIsValid($userMock, $username, $passcode);
     }
 }

@@ -73,9 +73,9 @@ class ConfigureTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testGetConfigurationDataInvalidTfat()
@@ -84,7 +84,7 @@ class ConfigureTest extends TestCase
         $this->expectExceptionMessage('Invalid two-factor authorization token');
         $this->duo
             ->expects($this->never())
-            ->method('getRequestSignature');
+            ->method('enrollNewUser');
         $this->model->getConfigurationData(
             'abc'
         );
@@ -92,9 +92,9 @@ class ConfigureTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testGetConfigurationDataAlreadyConfiguredProvider()
@@ -107,7 +107,7 @@ class ConfigureTest extends TestCase
 
         $this->duo
             ->expects($this->never())
-            ->method('getRequestSignature');
+            ->method('enrollNewUser');
         $this->model->getConfigurationData(
             $this->tokenManager->issueFor($userId)
         );
@@ -123,7 +123,7 @@ class ConfigureTest extends TestCase
         $this->expectExceptionMessage('Provider is not allowed.');
         $this->duo
             ->expects($this->never())
-            ->method('getRequestSignature');
+            ->method('enrollNewUser');
         $this->model->getConfigurationData(
             $this->tokenManager->issueFor($this->getUserId())
         );
@@ -131,9 +131,9 @@ class ConfigureTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testActivateInvalidTfat()
@@ -142,7 +142,7 @@ class ConfigureTest extends TestCase
         $this->expectExceptionMessage('Invalid two-factor authorization token');
         $this->duo
             ->expects($this->never())
-            ->method('getRequestSignature');
+            ->method('assertUserIsValid');
         $this->model->activate(
             'abc',
             'something'
@@ -151,9 +151,9 @@ class ConfigureTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testActivateAlreadyConfiguredProvider()
@@ -165,7 +165,7 @@ class ConfigureTest extends TestCase
             ->activate($userId);
         $this->duo
             ->expects($this->never())
-            ->method('getRequestSignature');
+            ->method('assertUserIsValid');
         $this->model->activate(
             $this->tokenManager->issueFor($userId),
             'something'
@@ -183,7 +183,7 @@ class ConfigureTest extends TestCase
         $userId = $this->getUserId();
         $this->duo
             ->expects($this->never())
-            ->method('getRequestSignature');
+            ->method('assertUserIsValid');
         $this->model->activate(
             $this->tokenManager->issueFor($userId),
             'something'
@@ -192,87 +192,80 @@ class ConfigureTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testGetConfigurationDataValidRequest()
     {
         $userId = $this->getUserId();
+        $userName = 'adminUser';
 
         $this->duo
-            ->method('getApiHostname')
-            ->willReturn('abc');
-        $this->duo
-            ->method('getRequestSignature')
-            ->with(
-                $this->callback(function ($value) use ($userId) {
-                    return (int)$value->getId() === $userId;
-                })
-            )
-            ->willReturn('cba');
+            ->expects($this->once())
+            ->method('enrollNewUser')
+            ->with($userName, 60)
+            ->willReturn('enrollment_data');
 
         $result = $this->model->getConfigurationData(
             $this->tokenManager->issueFor($userId)
         );
 
-        self::assertInstanceOf(DuoDataInterface::class, $result);
-        self::assertSame('abc', $result->getApiHostname());
-        self::assertSame('cba', $result->getSignature());
+        self::assertSame('enrollment_data', $result);
     }
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testActivateValidRequest()
     {
         $userId = $this->getUserId();
-        $tfat = $this->tokenManager->issueFor($userId);
+        $userName = 'adminUser';
 
-        $signature = 'a signature';
-        $this->authenticate->method('assertResponseIsValid')
-            ->with(
-                $this->callback(function ($value) use ($userId) {
-                    return (int)$value->getId() === $userId;
-                }),
-                $signature
-            );
+        $this->duo
+            ->expects($this->once())
+            ->method('assertUserIsValid')
+            ->with($userName)
+            ->willReturn('auth');
 
-        $this->model->activate($tfat, $signature);
+        $this->model->activate(
+            $this->tokenManager->issueFor($userId)
+        );
 
         self::assertTrue($this->tfa->getProviderByCode(DuoSecurity::CODE)->isActive($userId));
     }
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testActivateInvalidDataThrowsException()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Something');
+
         $userId = $this->getUserId();
         $tfat = $this->tokenManager->issueFor($userId);
 
-        $signature = 'a signature';
-        $this->authenticate->method('assertResponseIsValid')
-            ->with(
-                $this->callback(function ($value) use ($userId) {
-                    return (int)$value->getId() === $userId;
-                }),
-                $signature
-            )
+        $this->duo->method('assertUserIsValid')
+            ->with($this->callback(function ($username) use ($userId) {
+                // Assuming $username corresponds to a user object or username string.
+                // Replace 'getUserById' with the relevant logic for obtaining the username
+                $user = $this->userFactory->create()->load($userId);
+                return $username === $user->getUserName();
+            }))
             ->willThrowException(new \InvalidArgumentException('Something'));
 
-        $result = $this->model->activate($tfat, $signature);
+        // Call activate without a signature, as per your updated logic
+        $result = $this->model->activate($tfat);
 
         self::assertEmpty($result);
     }
