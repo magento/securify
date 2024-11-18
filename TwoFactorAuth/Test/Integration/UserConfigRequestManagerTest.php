@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2015 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -136,7 +136,7 @@ class UserConfigRequestManagerTest extends TestCase
         $this->manager->sendConfigRequestTo($this->user);
 
         $this->assertNotEmpty($message = $this->transportBuilderMock->getSentMessage());
-        $messageHtml = $message->getBody()->getParts()[0]->getRawContent();
+        $messageHtml = quoted_printable_decode($message->getBody()->bodyToString());
         $this->assertStringContainsString(
             'You are required to configure website-wide and personal Two-Factor Authorization in order to login to',
             $messageHtml
@@ -166,7 +166,7 @@ class UserConfigRequestManagerTest extends TestCase
         $this->manager->sendConfigRequestTo($this->user);
 
         $this->assertNotEmpty($message = $this->transportBuilderMock->getSentMessage());
-        $messageHtml = $message->getBody()->getParts()[0]->getRawContent();
+        $messageHtml = quoted_printable_decode($message->getBody()->bodyToString());
         $this->assertStringContainsString(
             'You are required to configure personal Two-Factor Authorization in order to login to',
             $messageHtml
