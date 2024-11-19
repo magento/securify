@@ -55,8 +55,8 @@ class EncryptSecrets implements DataPatchInterface
             ->where(
                 'path in (?)',
                 [
-                    DuoSecurity::XML_PATH_APPLICATION_KEY,
-                    DuoSecurity::XML_PATH_SECRET_KEY,
+                    DuoSecurity::XML_PATH_CLIENT_SECRET,
+                    DuoSecurity::XML_PATH_SKEY,
                     Service::XML_PATH_API_KEY,
                 ]
             );
