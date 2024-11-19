@@ -56,7 +56,6 @@ class EncryptSecrets implements DataPatchInterface
                 'path in (?)',
                 [
                     DuoSecurity::XML_PATH_CLIENT_SECRET,
-                    DuoSecurity::XML_PATH_SKEY,
                     Service::XML_PATH_API_KEY,
                 ]
             );
