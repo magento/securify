@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -65,103 +65,153 @@ class AuthenticateTest extends TestCase
     }
 
     /**
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testCreateAdminAccessTokenWithCredentials()
+    public function testVerifyInvalidCredentials()
     {
-        $username = 'admin';
-        $password = 'password123';
-        $passcode = '654321';
-
-        // Mock admin token service
-        $this->adminTokenService->expects($this->once())
-            ->method('createAdminAccessToken')
-            ->with($username, $password)
-            ->willReturn('token');
-
-        // Mock user retrieval
-        $userMock = $this->createMock(UserInterface::class);
-        $userMock->expects($this->any())
-            ->method('getId')
-            ->willReturn(123);
-
-        $this->userFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($userMock);
-
-        $userMock->expects($this->once())
-            ->method('loadByUsername')
-            ->with($username);
-
-        $this->userAuthenticator->expects($this->once())
-            ->method('assertProviderIsValidForUser')
-            ->with(123, DuoSecurity::CODE);
-
-        // Test assertResponseIsValid (can be mocked or separately tested)
-        $this->authenticate->expects($this->once())
-            ->method('assertResponseIsValid')
-            ->with($userMock, $username, $passcode);
-
-        // Call the method
-        $token = $this->authenticate->createAdminAccessTokenWithCredentials($username, $password, $passcode);
-        $this->assertEquals('token', $token);
+        $this->expectException(\Magento\Framework\Exception\AuthenticationException::class);
+        $this->tfa->getProviderByCode(DuoSecurity::CODE)
+            ->activate($this->getUserId());
+        $this->duo
+            ->expects($this->never())
+            ->method('authorizeUser');
+        $this->model->createAdminAccessTokenWithCredentials(
+            'adminUser',
+            'abc',
+            '123456'
+        );
     }
 
     /**
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testAssertResponseIsValid()
+    public function testVerifyNotConfiguredProvider()
     {
-        $userMock = $this->createMock(UserInterface::class);
-        $username = 'admin';
-        $passcode = '654321';
+        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+        $this->expectExceptionMessage('Provider is not configured.');
+        $userId = $this->getUserId();
+        $this->tfa->getProviderByCode(DuoSecurity::CODE)
+            ->resetConfiguration($userId);
 
-        $this->duo->expects($this->once())
-            ->method('authorizeUser')
-            ->with($username, 'passcode', ['passcode' => $passcode])
+        $this->duo
+            ->expects($this->never())
+            ->method('authorizeUser');
+        $this->model->createAdminAccessTokenWithCredentials(
+            'adminUser',
+            Bootstrap::ADMIN_PASSWORD,
+            '123456'
+        );
+    }
+
+    /**
+     * @magentoConfigFixture default/twofactorauth/general/force_providers authy
+     * @magentoDataFixture Magento/User/_files/user_with_role.php
+     */
+    public function testVerifyUnavailableProvider()
+    {
+        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+        $this->expectExceptionMessage('Provider is not allowed.');
+        $this->duo
+            ->expects($this->never())
+            ->method('authorizeUser');
+        $this->model->createAdminAccessTokenWithCredentials(
+            'adminUser',
+            Bootstrap::ADMIN_PASSWORD,
+            '123456'
+        );
+    }
+
+    /**
+     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoDataFixture Magento/User/_files/user_with_role.php
+     */
+    public function testVerifyValidRequest()
+    {
+        $userId = $this->getUserId();
+
+        // Activate the Two-Factor Authentication provider for DuoSecurity
+        $this->tfa->getProviderByCode(DuoSecurity::CODE)
+            ->activate($userId);
+
+        $username = 'adminUser';
+        $password = Bootstrap::ADMIN_PASSWORD;
+        $passcode = '123456'; // Example passcode for the test
+
+        // Mock the DuoSecurity `authorizeUser` method to simulate valid Duo response
+        $this->duo->method('authorizeUser')
+            ->with(
+                $this->equalTo($username),
+                $this->equalTo("passcode"),
+                $this->equalTo(['passcode' => $passcode])
+            )
             ->willReturn(['status' => 'allow']);
 
-        $this->alert->expects($this->never())
-            ->method('event');
+        // Attempt to create the access token
+        $token = $this->model->createAdminAccessTokenWithCredentials(
+            $username,
+            $password,
+            $passcode
+        );
 
-        // Call the method (no exception expected for valid response)
-        $this->authenticate->assertResponseIsValid($userMock, $username, $passcode);
+        // Assert that a token was generated successfully
+        self::assertNotEmpty($token);
     }
 
     /**
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testAssertResponseIsInvalid()
+    public function testVerifyInvalidRequest()
     {
-        $userMock = $this->createMock(UserInterface::class);
-        $userMock->expects($this->any())
-            ->method('getUserName')
-            ->willReturn('admin');
-
-        $username = 'admin';
-        $passcode = '123456';
-
-        $this->duo->expects($this->once())
-            ->method('authorizeUser')
-            ->with($username, 'passcode', ['passcode' => $passcode])
-            ->willReturn(['status' => 'deny', 'msg' => 'Invalid passcode']);
-
-        $this->alert->expects($this->once())
-            ->method('event')
-            ->with(
-                'Magento_TwoFactorAuth',
-                'DuoSecurity invalid auth Invalid passcode',
-                AlertInterface::LEVEL_WARNING,
-                'admin'
-            );
-
-        $this->expectException(LocalizedException::class);
+        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
         $this->expectExceptionMessage('Invalid response');
 
-        // Call the method (exception expected for invalid response)
-        $this->authenticate->assertResponseIsValid($userMock, $username, $passcode);
+        $userId = $this->getUserId();
+
+        // Activate the Two-Factor Authentication provider for DuoSecurity
+        $this->tfa->getProviderByCode(DuoSecurity::CODE)
+            ->activate($userId);
+
+        $username = 'adminUser';
+        $password = Bootstrap::ADMIN_PASSWORD;
+        $passcode = '123456'; // Example passcode used for testing
+
+        // Mock the DuoSecurity `authorizeUser` method to simulate an invalid response
+        $this->duo->method('authorizeUser')
+            ->with(
+                $this->equalTo($username),
+                $this->equalTo("passcode"),
+                $this->equalTo(['passcode' => $passcode])
+            )
+            ->willReturn(['status' => 'deny', 'msg' => 'Authentication denied']); // Simulate invalid response
+
+        // Attempt to create the access token, expecting an exception due to the invalid response
+        $this->model->createAdminAccessTokenWithCredentials(
+            $username,
+            $password,
+            $passcode
+        );
+    }
+
+    private function getUserId(): int
+    {
+        $user = $this->userFactory->create();
+        $user->loadByUsername('adminUser');
+
+        return (int)$user->getId();
     }
 }

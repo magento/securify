@@ -27,7 +27,7 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      */
-    protected $httpMethod = Request::METHOD_POST;
+    protected $httpMethod = Request::METHOD_GET;
 
     /**
      * @inheritDoc
