@@ -3,6 +3,7 @@
  * Copyright 2024 Adobe
  * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Model\Provider\Engine;
@@ -20,6 +21,7 @@ use DuoAPI\Auth as DuoAuth;
 
 /**
  * Duo Security engine
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class DuoSecurity implements EngineInterface
 {
@@ -119,6 +121,8 @@ class DuoSecurity implements EngineInterface
      * @param UrlInterface $urlBuilder
      * @param FormKey $formKey
      * @param SessionManagerInterface $session
+     * @param Client|null $client
+     * @param DuoAuth|null $duoAuth
      * @throws \Duo\DuoUniversal\DuoException
      */
     public function __construct(
@@ -126,20 +130,22 @@ class DuoSecurity implements EngineInterface
         EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
         FormKey $formKey,
-        SessionManagerInterface $session
+        SessionManagerInterface $session,
+        Client $client = null,
+        DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
         $this->formKey = $formKey;
         $this->session = $session;
-        $this->client = new Client(
+        $this->client = $client ?? new Client(
             $this->getClientId(),
             $this->getClientSecret(),
             $this->getApiHostname(),
             $this->getCallbackUrl()
         );
-        $this->duoAuth = new DuoAuth(
+        $this->duoAuth = $duoAuth ?? new DuoAuth(
             $this->getIkey(),
             $this->getSkey(),
             $this->getApiHostname()
@@ -235,7 +241,7 @@ class DuoSecurity implements EngineInterface
         try {
             $decoded_token = $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
             // Save the token in the session for later use
-            $this->session->setData('duo_token', $decoded_token);
+            $this->session->duo_token = $decoded_token;
         } catch (LocalizedException $e) {
             return false;
         }

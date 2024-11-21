@@ -3,6 +3,7 @@
  * Copyright 2024 Adobe
  * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Block\Provider\Duo;
@@ -62,25 +63,24 @@ class Auth extends Template
         try {
             $this->duoSecurity->healthCheck();
         } catch (LocalizedException $e) {
-            if ($duoFailMode == "OPEN") {
-                // If we're failing open, errors in 2FA still allow for success
+            if ($duoFailMode === "OPEN") {
                 $this->messageManager->addSuccessMessage(
                     __("Login 'Successful', but 2FA Not Performed. Confirm Duo client/secret/host values are correct")
                 );
-                return $this->_redirect('adminhtml/dashboard');
+                return $this->_url->getUrl('adminhtml/dashboard');
             } else {
-                // Otherwise the login fails and redirect user to the login page
                 $this->messageManager->addErrorMessage(
                     __("2FA Unavailable. Confirm Duo client/secret/host values are correct")
                 );
-                return $this->_redirect('adminhtml');
+                return $this->_url->getUrl('adminhtml');
             }
         }
 
         $user = $this->session->getUser();
-        if ($user) {
-            $username = $user->getUserName();
+        if (!$user) {
+            throw new LocalizedException(__('User session not found.'));
         }
+        $username = $user->getUserName();
         $prompt_uri = $this->duoSecurity->initiateAuth($username, $this->getFormKey().DuoSecurity::AUTH_SUFFIX);
         $this->jsLayout['components']['tfa-auth']['redirectUrl'] = $prompt_uri;
         return parent::getJsLayout();

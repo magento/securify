@@ -9,44 +9,75 @@ declare(strict_types=1);
 namespace Magento\TwoFactorAuth\Test\Unit\Model\Provider\Engine;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\User\Api\Data\UserInterface;
+use Magento\Framework\Data\Form\FormKey;
+use Magento\Framework\DataObject;
+use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Session\SessionManagerInterface;
+use Magento\Framework\UrlInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
+use Magento\User\Api\Data\UserInterface;
+use Duo\DuoUniversal\Client;
+use DuoAPI\Auth as DuoAuth;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DuoSecurityTest extends TestCase
 {
-    /**
-     * @var DuoSecurity
-     */
-    private $model;
-
-    /**
-     * @var DuoSecurity
-     */
-    private $modelWithForcedDuoAuth;
-
-    /**
-     * @var ScopeConfigInterface|MockObject
-     */
+    /** @var MockObject|ScopeConfigInterface */
     private $configMock;
 
-    /**
-     * @var UserInterface|MockObject
-     */
-    private $user;
+    /** @var MockObject|EncryptorInterface */
+    private $encryptorMock;
 
-    /**
-     * @inheritDoc
-     */
+    /** @var MockObject|UrlInterface */
+    private $urlMock;
+
+    /** @var MockObject|FormKey */
+    private $formKeyMock;
+
+    /** @var MockObject|SessionManagerInterface */
+    private $sessionMock;
+
+    /** @var MockObject|Client */
+    private $clientMock;
+
+    /** @var DuoSecurity */
+    private $model;
+
     protected function setUp(): void
     {
-        $objectManager = new ObjectManager($this);
-        $this->configMock = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
-        $this->user = $this->getMockBuilder(UserInterface::class)->disableOriginalConstructor()->getMock();
+        $this->configMock = $this->getMockBuilder(ScopeConfigInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->model = $objectManager->getObject(DuoSecurity::class, ['scopeConfig' => $this->configMock]);
-        $this->modelWithForcedDuoAuth = new DuoSecurity($this->configMock, $this->model::DUO_PREFIX);
+        $this->encryptorMock = $this->getMockBuilder(EncryptorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->urlMock = $this->getMockBuilder(UrlInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formKeyMock = $this->getMockBuilder(FormKey::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->sessionMock = $this->getMockBuilder(SessionManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->clientMock = $this->createMock(Client::class);
+        $this->duoAuthMock = $this->createMock(DuoAuth::class);
+
+        $this->model = new DuoSecurity(
+            $this->configMock,
+            $this->encryptorMock,
+            $this->urlMock,
+            $this->formKeyMock,
+            $this->sessionMock,
+            $this->clientMock,
+            $this->duoAuthMock
+        );
     }
 
     /**
@@ -65,25 +96,25 @@ class DuoSecurityTest extends TestCase
             ],
             [
                 null,
-                'value',
+                null,
                 null,
                 false
             ],
             [
                 'value',
-                'value',
                 null,
-                false
-            ],
-            [
-                null,
-                'value',
                 null,
                 false
             ],
             [
                 null,
                 'value',
+                null,
+                false
+            ],
+            [
+                null,
+                null,
                 'value',
                 false
             ]
@@ -115,5 +146,32 @@ class DuoSecurityTest extends TestCase
         );
 
         $this->assertEquals($expected, $this->model->isEnabled());
+    }
+
+    /**
+     * @return void
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
+    public function testVerify()
+    {
+        $this->clientMock->expects($this->once())
+            ->method('exchangeAuthorizationCodeFor2FAResult')
+            ->with('duo-code', 'username')
+            ->willReturn(['result' => 'valid-token']);
+
+        $this->formKeyMock->method('getFormKey')
+            ->willReturn('valid-form-key');
+
+        $user = $this->createMock(UserInterface::class);
+        $user->method('getUserName')->willReturn('username');
+
+        $request = new DataObject([
+            'state' => 'valid-form-keyDUOAUTH',
+            'duo_code' => 'duo-code'
+        ]);
+
+        $result = $this->model->verify($user, $request);
+
+        $this->assertTrue($result, 'Verification should return true for valid input.');
     }
 }
