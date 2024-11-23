@@ -71,7 +71,7 @@ class RestValidationPluginTest extends TestCase
         );
     }
 
-    public function getPluginCases(): array
+    public static function getPluginCases(): array
     {
         return [
             'unprotected-endpoint' => [false, false, false],

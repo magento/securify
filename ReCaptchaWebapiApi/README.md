@@ -4,4 +4,4 @@ Google reCAPTCHA ensures that a human being, rather than a computer (or â€œbotâ€
 
 This module provides the service contracts related to the base reCAPTCHA implementation.
 
-For more information please visit the [Magento document for reCAPTCHA](https://docs.magento.com/user-guide/stores/security-google-recaptcha.html).
+For more information please visit the [reCAPTCHA documentation](https://experienceleague.adobe.com/en/docs/commerce-admin/systems/security/captcha/security-google-recaptcha).

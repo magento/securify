@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\ReCaptchaWebapiGraphQl\Test\Api;
 
+use Exception;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\TestFramework\Fixture\Config;
 use Magento\Framework\App\ResourceConnection;
@@ -29,6 +30,7 @@ query {
         language_code
         failure_message
         forms
+        theme
     }
 }
 QUERY;
@@ -49,6 +51,7 @@ QUERY;
         Config('recaptcha_frontend/type_recaptcha_v3/score_threshold', 0.75),
         Config('recaptcha_frontend/type_recaptcha_v3/position', 'bottomright'),
         Config('recaptcha_frontend/type_recaptcha_v3/lang', 'en'),
+        Config('recaptcha_frontend/type_recaptcha_v3/theme', 'light'),
         Config('recaptcha_frontend/failure_messages/validation_failure_message', 'Test failure message'),
         Config('recaptcha_frontend/type_for/customer_login', 'recaptcha_v3')
     ]
@@ -65,7 +68,8 @@ QUERY;
                     'failure_message' => 'Test failure message',
                     'forms' => [
                         'CUSTOMER_LOGIN'
-                    ]
+                    ],
+                    'theme' => 'light'
                 ]
             ],
             $this->graphQlQuery(self::QUERY)
@@ -76,6 +80,7 @@ QUERY;
         Config('recaptcha_frontend/type_recaptcha_v3/score_threshold', 0.75),
         Config('recaptcha_frontend/type_recaptcha_v3/position', 'bottomright'),
         Config('recaptcha_frontend/type_recaptcha_v3/lang', 'en'),
+        Config('recaptcha_frontend/type_recaptcha_v3/theme', 'light'),
         Config('recaptcha_frontend/failure_messages/validation_failure_message', 'Test failure message')
     ]
     public function testQueryRecaptchaNoFormsConfigured(): void
@@ -100,7 +105,8 @@ QUERY;
                     'badge_position' => 'bottomright',
                     'language_code' => 'en',
                     'failure_message' => 'Test failure message',
-                    'forms' => []
+                    'forms' => [],
+                    'theme' => 'light'
                 ]
             ],
             $this->graphQlQuery(self::QUERY)
@@ -111,6 +117,7 @@ QUERY;
         Config('recaptcha_frontend/type_recaptcha_v3/score_threshold', 0.75),
         Config('recaptcha_frontend/type_recaptcha_v3/position', 'bottomright'),
         Config('recaptcha_frontend/type_recaptcha_v3/lang', 'en'),
+        Config('recaptcha_frontend/type_recaptcha_v3/theme', 'dark'),
         Config('recaptcha_frontend/failure_messages/validation_failure_message', 'Test failure message'),
         Config('recaptcha_frontend/type_for/customer_login', 'recaptcha_v3')
     ]
@@ -138,7 +145,8 @@ QUERY;
                     'failure_message' => 'Test failure message',
                     'forms' => [
                         'CUSTOMER_LOGIN'
-                    ]
+                    ],
+                    'theme' => 'dark'
                 ]
             ],
             $this->graphQlQuery(self::QUERY)
@@ -151,7 +159,7 @@ QUERY;
         $resource = Bootstrap::getObjectManager()->get(ResourceConnection::class);
         /** @var AdapterInterface $connection */
         $connection = $resource->getConnection(ResourceConnection::DEFAULT_CONNECTION);
-        
+
         $connection->delete(
             $resource->getTableName('core_config_data')
         );

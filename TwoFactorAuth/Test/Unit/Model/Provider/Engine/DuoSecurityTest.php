@@ -55,7 +55,7 @@ class DuoSecurityTest extends TestCase
      *
      * @return array
      */
-    public function getIsEnabledTestDataSet(): array
+    public static function getIsEnabledTestDataSet(): array
     {
         return [
             [

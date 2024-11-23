@@ -23,6 +23,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class GraphQlValidatorTest extends TestCase
 {
     /**
@@ -60,7 +63,7 @@ class GraphQlValidatorTest extends TestCase
         );
     }
 
-    public function getPluginCases(): array
+    public static function getPluginCases(): array
     {
         return [
             'not-mutation' => [false, true, false, false],

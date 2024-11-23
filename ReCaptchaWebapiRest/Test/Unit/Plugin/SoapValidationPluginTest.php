@@ -64,7 +64,7 @@ class SoapValidationPluginTest extends TestCase
         );
     }
 
-    public function getPluginCases(): array
+    public static function getPluginCases(): array
     {
         return [
             'not-protected' => [false, UserContextInterface::USER_TYPE_GUEST, null, false],
