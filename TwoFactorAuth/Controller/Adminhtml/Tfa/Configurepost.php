@@ -124,7 +124,7 @@ class Configurepost extends AbstractAction implements HttpPostActionInterface
             );
             $this->config->reinit();
             $this->getMessageManager()->addSuccessMessage(
-                __('Two-Factory Authorization providers have been successfully configured')
+                __('Two-Factor Authorization providers have been successfully configured')
             );
 
             return $this->_redirect($this->startUpUrl);
