@@ -2,13 +2,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-
-.block.newsletter {
-    .field-recaptcha {
-        .field {
-            .control {
-                &:before {
-                    content: none;
+& when (@media-common = true) {
+    .block.newsletter {
+        .field-recaptcha {
+            .field {
+                .control {
+                    &:before {
+                        content: none;
+                    }
                 }
             }
         }

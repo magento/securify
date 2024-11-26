@@ -2,10 +2,12 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-.login-container,
-.form-login,
-.form-edit-account {
-    .g-recaptcha {
-        margin-bottom: 10px !important;
+& when (@media-common = true) {
+    .login-container,
+    .form-login,
+    .form-edit-account {
+        .g-recaptcha {
+            margin-bottom: 10px !important;
+        }
     }
 }
