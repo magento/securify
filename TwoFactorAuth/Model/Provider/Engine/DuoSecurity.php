@@ -241,7 +241,7 @@ class DuoSecurity implements EngineInterface
         try {
             $decoded_token = $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
             // Save the token in the session for later use
-            $this->session->duo_token = $decoded_token;
+            $this->session->setData('duo_token', $decoded_token);
         } catch (LocalizedException $e) {
             return false;
         }

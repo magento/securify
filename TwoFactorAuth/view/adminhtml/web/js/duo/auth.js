@@ -1,13 +1,12 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
 
 define([
     'ko',
-    'uiComponent',
-    'Magento_TwoFactorAuth/js/duo/api'
-], function (ko, Component, duo) {
+    'uiComponent'
+], function (ko, Component) {
     'use strict';
 
     return Component.extend({
@@ -17,16 +16,24 @@ define([
             template: 'Magento_TwoFactorAuth/duo/auth'
         },
 
-        redirectUrl: '',
-        authenticateData: {},
+        authUrl: '',
+
+        getAuthUrl: function () {
+            return this.authUrl;
+        },
+
+        redirectToAuthUrl: function () {
+            var redirectUrl = this.getAuthUrl();
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            }
+        },
 
         /**
-         * Start waiting loop
+         * After the element is rendered, bind the authUrl (optional)
          */
         onAfterRender: function () {
-            window.setTimeout(function () {
-                duo(this, null);
-            }, 1000);
-        },
+            var authUrl = this.getAuthUrl();
+        }
     });
 });

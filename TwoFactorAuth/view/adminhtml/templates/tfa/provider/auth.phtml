@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright 2024 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 ?>
 <div id="tfa-auth-container" data-bind="scope:'tfa-auth'">
@@ -13,7 +13,7 @@
 <script type="text/x-magento-init">
 {
     "#tfa-auth-container": {
-        "Magento_TwoFactorAuth/js/duo/api": <?= /* @noEscape */ $block->getJsLayout() ?>
+        "Magento_Ui/js/core/app": <?= /* @noEscape */ $block->getJsLayout() ?>
     }
 }
 </script>

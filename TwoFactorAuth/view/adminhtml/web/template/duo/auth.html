@@ -1,7 +1,7 @@
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
  */
  -->
 <div>
@@ -9,15 +9,10 @@
         <fieldset class="admin__fieldset">
             <legend class="admin__legend"><span translate="'2FA - Duo Security'"></span></legend>
             <br/>
-
-            <iframe id="duo_iframe"
-                    data-bind="afterRender: onAfterRender"
-                    attr="{
-                        'data-host': getApiHost(),
-                        'data-sig-request': getSignature(),
-                        'data-post-action': getPostUrl()
-                    }"
-            ></iframe>
+            <button type="button" data-bind="click: redirectToAuthUrl, afterRender: onAfterRender">
+                Go to Duo Universal Prompt
+            </button>
         </fieldset>
     </form>
 </div>
+
