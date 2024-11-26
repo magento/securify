@@ -160,7 +160,7 @@ define(
                 var listeners;
 
                 if (this.getIsInvisibleRecaptcha() && parentForm.length > 0) {
-                    parentForm.submit(function (event) {
+                    parentForm.on('submit', function (event) {
                         var submitButton;
 
                         if (!this.tokenField.value) {
