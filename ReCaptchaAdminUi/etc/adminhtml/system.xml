@@ -5,38 +5,45 @@
  * See COPYING.txt for license details.
  */
  -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="security" translate="label" sortOrder="200">
             <label>Security</label>
         </tab>
 
-        <section id="recaptcha_backend" translate="label" type="text" sortOrder="600" showInDefault="1"
-                 showInWebsite="0" showInStore="0">
+        <section id="recaptcha" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="600">
+            <class>separator-top</class>
+            <label>Google reCAPTCHA</label>
+            <tab>security</tab>
+            <resource>Magento_ReCaptchaUi::config</resource>
+            <group id="api" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="10">
+                <label>API</label>
+                <field id="url" type="select" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API URL</label>
+                    <source_model>Magento\ReCaptchaAdminUi\Model\OptionSource\ApiUrl</source_model>
+                </field>
+            </group>
+        </section>
+
+        <section id="recaptcha_backend" translate="label" sortOrder="600" showInDefault="1" showInWebsite="0" showInStore="0">
             <class>separator-top</class>
             <label>Google reCAPTCHA Admin Panel</label>
             <tab>security</tab>
             <resource>Magento_ReCaptchaUi::config</resource>
-
-            <group id="type_for" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="0"
+            <group id="type_for" translate="label" sortOrder="1000" showInDefault="1" showInWebsite="0"
                    showInStore="0">
                 <label>Admin Panel</label>
-                <field id="recaptcha_backend_info_heading" translate="label" sortOrder="100" showInDefault="1"
-                       showInWebsite="0" showInStore="0" >
+                <field id="recaptcha_backend_info_heading" translate="label" sortOrder="100" showInDefault="1" showInWebsite="0" showInStore="0" >
                     <frontend_model>Magento\ReCaptchaAdminUi\Block\Adminhtml\System\Config\Form\Field\Notice</frontend_model>
                 </field>
             </group>
 
-            <group id="failure_messages" translate="label" type="text" sortOrder="950" showInDefault="1" showInWebsite="1"
-                   showInStore="1">
+            <group id="failure_messages" translate="label" sortOrder="950" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>reCAPTCHA Failure Messages</label>
-
                 <field id="validation_failure_message" translate="label" type="textarea" sortOrder="10" showInDefault="1"
                        showInWebsite="0" showInStore="0" canRestore="1">
                     <label>reCAPTCHA Validation Failure Message</label>
                 </field>
-
                 <field id="technical_failure_message" translate="label" type="textarea" sortOrder="20" showInDefault="1"
                        showInWebsite="0" showInStore="0" canRestore="1">
                     <label>reCAPTCHA Technical Failure Message</label>
@@ -44,18 +51,14 @@
             </group>
         </section>
 
-        <section id="recaptcha_frontend" translate="label" type="text" sortOrder="700" showInDefault="1"
-                 showInWebsite="1" showInStore="1">
+        <section id="recaptcha_frontend" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="700">
             <class>separator-top</class>
             <label>Google reCAPTCHA Storefront</label>
             <tab>security</tab>
             <resource>Magento_ReCaptchaUi::config</resource>
-
-            <group id="type_for" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1"
-                   showInStore="0">
+            <group id="type_for" translate="label" showInDefault="1" showInWebsite="1" showInStore="0" sortOrder="1000">
                 <label>Storefront</label>
-                <field id="recaptcha_frontend_info_heading" translate="label" sortOrder="100" showInDefault="1"
-                       showInWebsite="1" showInStore="0">
+                <field id="recaptcha_frontend_info_heading" translate="label" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
                     <frontend_model>Magento\ReCaptchaAdminUi\Block\Adminhtml\System\Config\Form\Field\Notice</frontend_model>
                 </field>
             </group>

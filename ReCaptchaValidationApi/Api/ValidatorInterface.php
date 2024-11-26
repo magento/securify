@@ -24,8 +24,5 @@ interface ValidatorInterface
      * @param ValidationConfigInterface $validationConfig
      * @return ValidationResult
      */
-    public function isValid(
-        string $reCaptchaResponse,
-        ValidationConfigInterface $validationConfig
-    ): ValidationResult;
+    public function isValid(string $reCaptchaResponse, ValidationConfigInterface $validationConfig): ValidationResult;
 }

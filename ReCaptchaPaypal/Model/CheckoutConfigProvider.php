@@ -32,7 +32,7 @@ class CheckoutConfigProvider implements ConfigProviderInterface
     /**
      * @inheritdoc
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return [
             'recaptcha_paypal' => $this->isCaptchaEnabled->isCaptchaEnabledFor('paypal_payflowpro')

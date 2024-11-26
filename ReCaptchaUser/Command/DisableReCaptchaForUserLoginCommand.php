@@ -33,7 +33,7 @@ class DisableReCaptchaForUserLoginCommand extends Command
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('security:recaptcha:disable-for-user-login');
         $this->setDescription('Disable reCAPTCHA for admin user login form');
@@ -45,7 +45,7 @@ class DisableReCaptchaForUserLoginCommand extends Command
      * @inheritdoc
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->disableReCaptchaForUserLogin->execute();
 

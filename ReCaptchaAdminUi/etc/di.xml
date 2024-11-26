@@ -5,15 +5,27 @@
  * See COPYING.txt for license details.
  */
  -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <virtualType name="Magento\ReCaptchaAdminUi\Model\OptionSource\Type"
-                 type="Magento\ReCaptchaAdminUi\Model\OptionSource">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Magento\ReCaptchaAdminUi\Model\OptionSource\Type" type="Magento\ReCaptchaAdminUi\Model\OptionSource">
         <arguments>
             <argument name="options" xsi:type="array">
                 <item name="default" xsi:type="array">
                     <item name="label" xsi:type="string" translate="true">No</item>
                     <item name="value" xsi:type="null"/>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\ReCaptchaAdminUi\Model\OptionSource\ApiUrl" type="Magento\ReCaptchaAdminUi\Model\OptionSource">
+        <arguments>
+            <argument name="options" xsi:type="array">
+                <item name="default" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">www.google.com</item>
+                    <item name="value" xsi:type="string">https://www.google.com/recaptcha/api.js</item>
+                </item>
+                <item name="global" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">www.recaptcha.net</item>
+                    <item name="value" xsi:type="string">https://www.recaptcha.net/recaptcha/api.js</item>
                 </item>
             </argument>
         </arguments>

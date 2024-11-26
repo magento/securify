@@ -56,7 +56,7 @@ class ReCaptcha extends Template
     /**
      * Get reCAPTCHA ID
      */
-    public function getRecaptchaId()
+    public function getRecaptchaId(): string
     {
         return (string)$this->getData('recaptcha_id') ?: 'recaptcha-' . sha1($this->getNameInLayout());
     }
@@ -67,7 +67,7 @@ class ReCaptcha extends Template
      * @return string
      * @throws InputException
      */
-    public function getJsLayout()
+    public function getJsLayout(): string
     {
         $layout = $this->serializer->unserialize(parent::getJsLayout());
 
@@ -95,15 +95,10 @@ class ReCaptcha extends Template
      */
     public function getCaptchaUiConfig(): array
     {
-        $key = $this->getData('recaptcha_for');
-        $uiConfig = $this->getData('captcha_ui_config');
+        $key = (string) $this->getData('recaptcha_for');
+        $uiConfig = (array) $this->getData('captcha_ui_config');
 
-        if ($uiConfig) {
-            $uiConfig = array_replace_recursive($this->captchaUiConfigResolver->get($key), $uiConfig);
-        } else {
-            $uiConfig = $this->captchaUiConfigResolver->get($key);
-        }
-        return $uiConfig;
+        return array_replace_recursive($this->captchaUiConfigResolver->get($key), $uiConfig);
     }
 
 
@@ -111,7 +106,7 @@ class ReCaptcha extends Template
      * @return string
      * @throws InputException
      */
-    public function toHtml()
+    public function toHtml(): string
     {
         $key = $this->getData('recaptcha_for');
         if (empty($key) || !$this->isCaptchaEnabled->isCaptchaEnabledFor($key)) {

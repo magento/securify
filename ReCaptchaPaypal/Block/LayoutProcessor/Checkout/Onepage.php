@@ -47,7 +47,7 @@ class Onepage implements LayoutProcessorInterface
      * @return array
      * @throws InputException
      */
-    public function process($jsLayout)
+    public function process($jsLayout): array
     {
         $key = 'paypal_payflowpro';
         $skipCheckoutRecaptchaForPayments = [

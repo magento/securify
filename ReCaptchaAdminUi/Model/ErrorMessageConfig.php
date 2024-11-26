@@ -38,10 +38,7 @@ class ErrorMessageConfig implements ErrorMessageConfigInterface
      */
     public function getTechnicalFailureMessage(): string
     {
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_TECHNICAL,
-            ScopeInterface::SCOPE_STORE
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_TECHNICAL, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -49,9 +46,6 @@ class ErrorMessageConfig implements ErrorMessageConfigInterface
      */
     public function getValidationFailureMessage(): string
     {
-        return $this->scopeConfig->getValue(
-            self::XML_PATH_VALIDATION,
-            ScopeInterface::SCOPE_STORE
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_VALIDATION, ScopeInterface::SCOPE_STORE);
     }
 }

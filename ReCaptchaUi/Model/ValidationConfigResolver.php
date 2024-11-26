@@ -33,21 +33,12 @@ class ValidationConfigResolver implements ValidationConfigResolverInterface
     /**
      * @param CaptchaTypeResolverInterface $captchaTypeResolver
      * @param ValidationConfigProviderInterface[] $validationConfigProviders
-     * @throws InputException
      */
     public function __construct(
         CaptchaTypeResolverInterface $captchaTypeResolver,
         array $validationConfigProviders = []
     ) {
         $this->captchaTypeResolver = $captchaTypeResolver;
-
-        foreach ($validationConfigProviders as $validationConfigProvider) {
-            if (!$validationConfigProvider instanceof ValidationConfigProviderInterface) {
-                throw new InputException(
-                    __('Validation config provider must implement %1.', [ConfigProviderInterface::class])
-                );
-            }
-        }
         $this->validationConfigProviders = $validationConfigProviders;
     }
 
@@ -63,6 +54,7 @@ class ValidationConfigResolver implements ValidationConfigResolverInterface
                 __('Validation config provider for "%type" is not configured.', ['type' => $captchaType])
             );
         }
+
         return $this->validationConfigProviders[$captchaType]->get();
     }
 }

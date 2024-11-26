@@ -21,9 +21,10 @@ class CaptchaResponseResolver implements CaptchaResponseResolverInterface
     public function resolve(RequestInterface $request): string
     {
         $reCaptchaParam = $request->getParam(self::PARAM_RECAPTCHA);
-        if (empty($reCaptchaParam)) {
+        if (!$reCaptchaParam) {
             throw new InputException(__('Can not resolve reCAPTCHA parameter.'));
         }
+
         return $reCaptchaParam;
     }
 }

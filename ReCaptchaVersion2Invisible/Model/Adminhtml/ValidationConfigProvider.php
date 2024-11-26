@@ -58,9 +58,7 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
      */
     private function getValidationFailureMessage(): string
     {
-        return trim(
-            (string)$this->scopeConfig->getValue(self::XML_PATH_VALIDATION_FAILURE)
-        );
+        return trim((string)$this->scopeConfig->getValue(self::XML_PATH_VALIDATION_FAILURE));
     }
 
     /**
@@ -78,8 +76,7 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
      */
     public function get(): ValidationConfigInterface
     {
-        /** @var ValidationConfigInterface $validationConfig */
-        $validationConfig = $this->validationConfigFactory->create(
+        return $this->validationConfigFactory->create(
             [
                 'privateKey' => $this->getPrivateKey(),
                 'remoteIp' => $this->remoteAddress->getRemoteAddress(),
@@ -87,6 +84,5 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
                 'extensionAttributes' => null,
             ]
         );
-        return $validationConfig;
     }
 }
