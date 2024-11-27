@@ -16,7 +16,7 @@
         "spomky-labs/otphp": "^11.2",
         "endroid/qr-code": "^4.3.5",
         "2tvenom/cborencode": "^1.0",
-        "duosecurity/duo_api_php": "1.1",
+        "duosecurity/duo_api_php": "^1.1",
         "duosecurity/duo_universal_php": "^1.0"
     },
     "type": "magento2-module",
