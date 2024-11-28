@@ -41,6 +41,11 @@ class DuoSecurityTest extends TestCase
     /** @var MockObject|Client */
     private $clientMock;
 
+    /**
+     * @var DuoAuth|MockObject
+     */
+    private $duoAuthMock;
+
     /** @var DuoSecurity */
     private $model;
 
