@@ -12,7 +12,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\DataObject;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
 use Magento\User\Api\Data\UserInterface;
@@ -34,9 +33,6 @@ class DuoSecurityTest extends TestCase
 
     /** @var MockObject|FormKey */
     private $formKeyMock;
-
-    /** @var MockObject|SessionManagerInterface */
-    private $sessionMock;
 
     /** @var MockObject|Client */
     private $clientMock;
@@ -67,10 +63,6 @@ class DuoSecurityTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->sessionMock = $this->getMockBuilder(SessionManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->clientMock = $this->createMock(Client::class);
         $this->duoAuthMock = $this->createMock(DuoAuth::class);
 
@@ -79,7 +71,6 @@ class DuoSecurityTest extends TestCase
             $this->encryptorMock,
             $this->urlMock,
             $this->formKeyMock,
-            $this->sessionMock,
             $this->clientMock,
             $this->duoAuthMock
         );

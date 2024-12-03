@@ -12,7 +12,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
@@ -21,7 +20,6 @@ use DuoAPI\Auth as DuoAuth;
 
 /**
  * Duo Security engine
- * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class DuoSecurity implements EngineInterface
 {
@@ -111,16 +109,10 @@ class DuoSecurity implements EngineInterface
     private $formKey;
 
     /**
-     * @var SessionManagerInterface
-     */
-    private $session;
-
-    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param EncryptorInterface $encryptor
      * @param UrlInterface $urlBuilder
      * @param FormKey $formKey
-     * @param SessionManagerInterface $session
      * @param Client|null $client
      * @param DuoAuth|null $duoAuth
      * @throws \Duo\DuoUniversal\DuoException
@@ -130,7 +122,6 @@ class DuoSecurity implements EngineInterface
         EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
         FormKey $formKey,
-        SessionManagerInterface $session,
         Client $client = null,
         DuoAuth $duoAuth = null
     ) {
@@ -138,7 +129,6 @@ class DuoSecurity implements EngineInterface
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
         $this->formKey = $formKey;
-        $this->session = $session;
         $this->client = $client ?? new Client(
             $this->getClientId(),
             $this->getClientSecret(),
@@ -239,9 +229,8 @@ class DuoSecurity implements EngineInterface
         }
 
         try {
+            // Not saving token as this is just for verificaiton purpose
             $decoded_token = $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
-            // Save the token in the session for later use
-            $this->session->setData('duo_token', $decoded_token);
         } catch (LocalizedException $e) {
             return false;
         }
