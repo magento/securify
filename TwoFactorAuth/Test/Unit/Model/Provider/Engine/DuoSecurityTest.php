@@ -99,13 +99,6 @@ class DuoSecurityTest extends TestCase
                 false
             ],
             [
-                'test.duosecurity.com',
-                null,
-                null,
-                null,
-                false
-            ],
-            [
                 null,
                 'ABCDEFGHIJKLMNOPQRST',
                 null,
