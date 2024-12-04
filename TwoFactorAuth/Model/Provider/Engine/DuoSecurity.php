@@ -159,7 +159,10 @@ class DuoSecurity implements EngineInterface
      */
     private function getClientSecret(): string
     {
-        return $this->encryptor->decrypt($this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET));
+        // return default value if client secret is not set as per Duo Library
+        return $this->encryptor->decrypt(
+            $this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET)
+        ) ?: 'abcdefghijklmnopqrstuvwxyz0123456789abcd';
     }
 
     /**
@@ -169,7 +172,8 @@ class DuoSecurity implements EngineInterface
      */
     private function getClientId(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_ID);
+        // return default value if client id is not set as per Duo Library
+        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_ID) ?: 'ABCDEFGHIJKLMNOPQRST';
     }
 
     /**

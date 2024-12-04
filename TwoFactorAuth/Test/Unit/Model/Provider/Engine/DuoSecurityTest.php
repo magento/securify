@@ -85,33 +85,38 @@ class DuoSecurityTest extends TestCase
     {
         return [
             [
-                'value',
-                'value',
-                'value',
+                'test.duosecurity.com',
+                'ABCDEFGHIJKLMNOPQRST',
+                'abcdefghijklmnopqrstuvwxyz0123456789abcd',
+                '0:3:pE7QRAv43bvos7oeve+ULjQ1QCoZw0NMXXtHZtYdmlBR4Nb18IpauosSz1jKFYjo1nPCsOwHk1mOlFpGObrzpSb3zF0=',
                 true
             ],
             [
                 null,
                 null,
                 null,
-                false
-            ],
-            [
-                'value',
-                null,
                 null,
                 false
             ],
             [
+                'test.duosecurity.com',
                 null,
-                'value',
+                null,
                 null,
                 false
             ],
             [
                 null,
+                'ABCDEFGHIJKLMNOPQRST',
                 null,
-                'value',
+                null,
+                false
+            ],
+            [
+                null,
+                null,
+                'abcdefghijklmnopqrstuvwxyz0123456789abcd',
+                '0:3:pE7QRAv43bvos7oeve+ULjQ1QCoZw0NMXXtHZtYdmlBR4Nb18IpauosSz1jKFYjo1nPCsOwHk1mOlFpGObrzpSb3zF0=',
                 false
             ]
         ];
@@ -130,16 +135,23 @@ class DuoSecurityTest extends TestCase
     public function testIsEnabled(
         ?string $apiHostname,
         ?string $clientId,
-        ?string $clientSecret,
+        ?string $encryptedClientSecret,
+        ?string $decryptedClientSecret,
         bool $expected
     ): void {
         $this->configMock->method('getValue')->willReturnMap(
             [
                 [DuoSecurity::XML_PATH_API_HOSTNAME, 'default', null, $apiHostname],
                 [DuoSecurity::XML_PATH_CLIENT_ID, 'default', null, $clientId],
-                [DuoSecurity::XML_PATH_CLIENT_SECRET, 'default', null, $clientSecret]
+                [DuoSecurity::XML_PATH_CLIENT_SECRET, 'default', null, $encryptedClientSecret]
             ]
         );
+
+        // Mocking EncryptorInterface
+        $this->encryptorMock->expects($this->any())
+            ->method('decrypt')
+            ->with($encryptedClientSecret)
+            ->willReturn($decryptedClientSecret);
 
         $this->assertEquals($expected, $this->model->isEnabled());
     }
