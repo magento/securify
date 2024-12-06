@@ -149,7 +149,7 @@ class DuoSecurity implements EngineInterface
      */
     public function getApiHostname(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_API_HOSTNAME);
+        return $this->scopeConfig->getValue(static::XML_PATH_API_HOSTNAME) ?: 'test.duosecurity.com';
     }
 
     /**
@@ -162,7 +162,7 @@ class DuoSecurity implements EngineInterface
         // return default value if client secret is not set as per Duo Library
         return $this->encryptor->decrypt(
             $this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET)
-        ) ?: 'abcdefghijklmnopqrstuvwxyz0123456789abcd';
+        ) ?: 'abcdefghijklmnopqrstuvwxyzabcdefghij1234567890';
     }
 
     /**
@@ -203,7 +203,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getIkey(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_IKEY);
+        return $this->scopeConfig->getValue(static::XML_PATH_IKEY) ?: 'DIXXXXXXXXX';
     }
 
     /**
@@ -213,7 +213,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getSkey(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_SKEY);
+        return $this->scopeConfig->getValue(static::XML_PATH_SKEY) ?: 'abcdefghijklmnopqrstuvwxyzabcdefghij1234567890';
     }
 
     /**

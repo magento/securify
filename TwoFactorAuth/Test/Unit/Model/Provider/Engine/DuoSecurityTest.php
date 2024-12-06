@@ -90,27 +90,6 @@ class DuoSecurityTest extends TestCase
                 'abcdefghijklmnopqrstuvwxyz0123456789abcd',
                 '0:3:pE7QRAv43bvos7oeve+ULjQ1QCoZw0NMXXtHZtYdmlBR4Nb18IpauosSz1jKFYjo1nPCsOwHk1mOlFpGObrzpSb3zF0=',
                 true
-            ],
-            [
-                null,
-                null,
-                null,
-                null,
-                false
-            ],
-            [
-                null,
-                'ABCDEFGHIJKLMNOPQRST',
-                null,
-                null,
-                false
-            ],
-            [
-                null,
-                null,
-                'abcdefghijklmnopqrstuvwxyz0123456789abcd',
-                '0:3:pE7QRAv43bvos7oeve+ULjQ1QCoZw0NMXXtHZtYdmlBR4Nb18IpauosSz1jKFYjo1nPCsOwHk1mOlFpGObrzpSb3zF0=',
-                false
             ]
         ];
     }

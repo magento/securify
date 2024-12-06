@@ -20,8 +20,10 @@
             </authy>
             <duo>
                 <client_id>ABCDEFGHIJKLMNOPQRST</client_id>
-                <client_secret backend_model="Magento\Config\Model\Config\Backend\Encrypted">abcdefghijklmnopqrstuvwxyz0123456789abcd</client_secret>
-                <secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <client_secret>abcdefghijklmnopqrstuvwxyzabcdefghij1234567890</client_secret>
+                <api_hostname>test.duosecurity.com</api_hostname>
+                <integration_key>DIXXXXXXXXX</integration_key>
+                <secret_key>abcdefghijklmnopqrstuvwxyzabcdefghij1234567890</secret_key>
             </duo>
             <google>
                 <leeway backend_model="Magento\TwoFactorAuth\Model\Config\Backend\Leeway">29</leeway>
