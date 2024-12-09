@@ -44,7 +44,6 @@ class AuthpostTest extends AbstractConfigureBackendController
      * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
      * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/application_key duo_security
      */
     public function testTokenAccess(): void
     {
@@ -59,7 +58,6 @@ class AuthpostTest extends AbstractConfigureBackendController
      * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
      * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/application_key duo_security
      */
     public function testAclHasAccess()
     {
@@ -75,7 +73,6 @@ class AuthpostTest extends AbstractConfigureBackendController
      * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
      * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/application_key duo_security
      */
     public function testAclNoAccess()
     {
