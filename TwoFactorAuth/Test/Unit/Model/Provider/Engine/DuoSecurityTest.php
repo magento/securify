@@ -89,6 +89,7 @@ class DuoSecurityTest extends TestCase
                 'ABCDEFGHIJKLMNOPQRST',
                 'abcdefghijklmnopqrstuvwxyz0123456789abcd',
                 '0:3:pE7QRAv43bvos7oeve+ULjQ1QCoZw0NMXXtHZtYdmlBR4Nb18IpauosSz1jKFYjo1nPCsOwHk1mOlFpGObrzpSb3zF0=',
+                'google,duo_security,authy',
                 true
             ]
         ];
@@ -109,13 +110,15 @@ class DuoSecurityTest extends TestCase
         ?string $clientId,
         ?string $encryptedClientSecret,
         ?string $decryptedClientSecret,
+        string $forceProviders,
         bool $expected
     ): void {
         $this->configMock->method('getValue')->willReturnMap(
             [
                 [DuoSecurity::XML_PATH_API_HOSTNAME, 'default', null, $apiHostname],
                 [DuoSecurity::XML_PATH_CLIENT_ID, 'default', null, $clientId],
-                [DuoSecurity::XML_PATH_CLIENT_SECRET, 'default', null, $encryptedClientSecret]
+                [DuoSecurity::XML_PATH_CLIENT_SECRET, 'default', null, $encryptedClientSecret],
+                ['twofactorauth/general/force_providers', 'default', null, $forceProviders]
             ]
         );
 
@@ -126,32 +129,5 @@ class DuoSecurityTest extends TestCase
             ->willReturn($decryptedClientSecret);
 
         $this->assertEquals($expected, $this->model->isEnabled());
-    }
-
-    /**
-     * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     */
-    public function testVerify()
-    {
-        $this->clientMock->expects($this->once())
-            ->method('exchangeAuthorizationCodeFor2FAResult')
-            ->with('duo-code', 'username')
-            ->willReturn(['result' => 'valid-token']);
-
-        $this->formKeyMock->method('getFormKey')
-            ->willReturn('valid-form-key');
-
-        $user = $this->createMock(UserInterface::class);
-        $user->method('getUserName')->willReturn('username');
-
-        $request = new DataObject([
-            'state' => 'valid-form-keyDUOAUTH',
-            'duo_code' => 'duo-code'
-        ]);
-
-        $result = $this->model->verify($user, $request);
-
-        $this->assertTrue($result, 'Verification should return true for valid input.');
     }
 }

@@ -129,17 +129,19 @@ class DuoSecurity implements EngineInterface
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
         $this->formKey = $formKey;
-        $this->client = $client ?? new Client(
-            $this->getClientId(),
-            $this->getClientSecret(),
-            $this->getApiHostname(),
-            $this->getCallbackUrl()
-        );
-        $this->duoAuth = $duoAuth ?? new DuoAuth(
-            $this->getIkey(),
-            $this->getSkey(),
-            $this->getApiHostname()
-        );
+        if ($this->isDuoForcedProvider()) {
+            $this->client = $client ?? new Client(
+                    $this->getClientId(),
+                    $this->getClientSecret(),
+                    $this->getApiHostname(),
+                    $this->getCallbackUrl()
+                );
+            $this->duoAuth = $duoAuth ?? new DuoAuth(
+                    $this->getIkey(),
+                    $this->getSkey(),
+                    $this->getApiHostname()
+                );
+        }
     }
 
     /**
@@ -149,7 +151,7 @@ class DuoSecurity implements EngineInterface
      */
     public function getApiHostname(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_API_HOSTNAME) ?: 'test.duosecurity.com';
+        return $this->scopeConfig->getValue(static::XML_PATH_API_HOSTNAME);
     }
 
     /**
@@ -162,7 +164,7 @@ class DuoSecurity implements EngineInterface
         // return default value if client secret is not set as per Duo Library
         return $this->encryptor->decrypt(
             $this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET)
-        ) ?: 'abcdefghijklmnopqrstuvwxyzabcdefghij1234567890';
+        );
     }
 
     /**
@@ -173,7 +175,7 @@ class DuoSecurity implements EngineInterface
     private function getClientId(): string
     {
         // return default value if client id is not set as per Duo Library
-        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_ID) ?: 'ABCDEFGHIJKLMNOPQRST';
+        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_ID);
     }
 
     /**
@@ -203,7 +205,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getIkey(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_IKEY) ?: 'DIXXXXXXXXX';
+        return $this->scopeConfig->getValue(static::XML_PATH_IKEY);
     }
 
     /**
@@ -213,7 +215,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getSkey(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_SKEY) ?: 'abcdefghijklmnopqrstuvwxyzabcdefghij1234567890';
+        return $this->scopeConfig->getValue(static::XML_PATH_SKEY);
     }
 
     /**
@@ -242,13 +244,21 @@ class DuoSecurity implements EngineInterface
         return true;
     }
 
+    private function isDuoForcedProvider(): bool
+    {
+        $providers = $this->scopeConfig->getValue('twofactorauth/general/force_providers') ?? '';
+        $forcedProviders = array_map('trim', explode(',', $providers));
+        return in_array(self::CODE, $forcedProviders, true);
+    }
+
     /**
      * @inheritDoc
      */
     public function isEnabled(): bool
     {
         try {
-            return !!$this->getApiHostname() &&
+            return $this->isDuoForcedProvider() &&
+                !!$this->getApiHostname() &&
                 !!$this->getClientId() &&
                 !!$this->getClientSecret();
         } catch (\TypeError $exception) {
