@@ -46,7 +46,16 @@ class Providers extends Field
             '#twofactorauth_general_force_providers' => [
                 'Magento_TwoFactorAuth/js/system/config/providers' => [
                     'modalTitleText' => $this->getModalTitleText(),
-                    'modalContentBody' => $this->getModalContentBody()
+                    'modalContentBody' => $this->getModalContentBody(),
+                    'duoProviderValue' => 'duo_security',
+                    'duoFields' => [
+                        'twofactorauth_duo_client_id',
+                        'twofactorauth_duo_client_secret',
+                        'twofactorauth_duo_api_hostname',
+                        'twofactorauth_duo_failmode',
+                        'twofactorauth_duo_integration_key',
+                        'twofactorauth_duo_secret_key',
+                    ]
                 ]
             ]
         ];

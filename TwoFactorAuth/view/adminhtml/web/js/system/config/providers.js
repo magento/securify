@@ -12,9 +12,50 @@ define([
     'use strict';
 
     return function (config, element) {
-
         var $element = $(element),
-            initialValue = $element.val();
+            initialValue = $element.val(),
+            duoProviderValue = config.duoProviderValue,
+            duoFields = config.duoFields;
+
+        $element.on('change', function () {
+            var selectedValues = $element.val() || [];
+
+            if (selectedValues.includes(duoProviderValue)) {
+                addRequiredAttributes(duoFields);
+            } else {
+                removeRequiredAttributes(duoFields);
+            }
+        });
+
+        /**
+         * Adds the "required" attribute to each Duo field
+         *
+         * @param {Array} fields - List of field IDs to mark as required
+         */
+        function addRequiredAttributes(fields) {
+            fields.forEach(function (fieldId) {
+                var $field = $('#' + fieldId);
+                if ($field.length) {
+                    $field.attr('required', 'required');
+                    $field.addClass('required-entry');
+                }
+            });
+        }
+
+        /**
+         * Removes the "required" attribute from each Duo field
+         *
+         * @param {Array} fields - List of field IDs to unmark as required
+         */
+        function removeRequiredAttributes(fields) {
+            fields.forEach(function (fieldId) {
+                var $field = $('#' + fieldId);
+                if ($field.length) {
+                    $field.removeAttr('required');
+                    $field.removeClass('required-entry');
+                }
+            });
+        }
 
         element.on('blur', function () {
             var currentValue = $element.val();
@@ -32,9 +73,6 @@ define([
                     text: $t('Cancel'),
                     class: 'action-secondary action-dismiss',
 
-                    /**
-                     * Close modal and trigger 'cancel' action on click
-                     */
                     click: function (event) {
                         this.closeModal(event);
                     }
@@ -42,18 +80,11 @@ define([
                     text: $t('Confirm'),
                     class: 'action-primary action-accept',
 
-                    /**
-                     * Close modal and trigger 'confirm' action on click
-                     */
                     click: function (event) {
                         this.closeModal(event, true);
                     }
                 }],
                 actions: {
-
-                    /**
-                     * Revert back to original Enabled setting
-                     */
                     cancel: function () {
                         $element.val(initialValue);
                     }
@@ -62,3 +93,4 @@ define([
         });
     };
 });
+
