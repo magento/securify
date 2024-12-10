@@ -121,14 +121,12 @@ class DuoSecurity implements EngineInterface
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
-        FormKey $formKey,
         Client $client = null,
         DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
-        $this->formKey = $formKey;
         if ($this->isDuoForcedProvider()) {
             $this->client = $client ?? new Client(
                     $this->getClientId(),
@@ -228,9 +226,6 @@ class DuoSecurity implements EngineInterface
         $username = $user->getUserName();
 
         if (empty($savedState) || empty($username)) {
-            return false;
-        }
-        if ($this->formKey->getFormKey().static::AUTH_SUFFIX != $savedState) {
             return false;
         }
 
