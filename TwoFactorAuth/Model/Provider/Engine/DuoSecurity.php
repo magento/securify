@@ -221,15 +221,17 @@ class DuoSecurity implements EngineInterface
      */
     public function verify(UserInterface $user, DataObject $request): bool
     {
-        $savedState = $request->getData('state');
+        $state = $request->getData('state');
         $duoCode = $request->getData('duo_code');
         $username = $user->getUserName();
+
+        $savedState = $this->helper->getSavedDuoState();
 
         if (empty($savedState) || empty($username)) {
             return false;
         }
 
-        if ($this->helper->getFormKey() . self::AUTH_SUFFIX != $savedState) {
+        if ($state != $savedState) {
             return false;
         }
 
@@ -290,6 +292,14 @@ class DuoSecurity implements EngineInterface
     public function healthCheck(): void
     {
         $this->client->healthCheck();
+    }
+
+    /**
+     * @return string
+     */
+    public function generateDuoState() : string
+    {
+        return $this->client->generateState();
     }
 
     /**

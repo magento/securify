@@ -81,7 +81,9 @@ class Auth extends Template
             throw new LocalizedException(__('User session not found.'));
         }
         $username = $user->getUserName();
-        $prompt_uri = $this->duoSecurity->initiateAuth($username, $this->getFormKey().DuoSecurity::AUTH_SUFFIX);
+        $state = $this->duoSecurity->generateDuoState();
+        $this->session->setDuoState($state);
+        $prompt_uri = $this->duoSecurity->initiateAuth($username, $state);
         $this->jsLayout['components']['tfa-auth']['authUrl'] = $prompt_uri;
         return parent::getJsLayout();
     }

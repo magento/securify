@@ -6,21 +6,21 @@
 
 namespace Magento\TwoFactorAuth\Helper;
 
-use Magento\Framework\Data\Form\FormKey;
+use Magento\Backend\Model\Auth\Session;
 
 class Data
 {
     /**
-     * @var FormKey
+     * @var Session
      */
-    private $formKey;
+    private $session;
 
     /**
-     * @param FormKey $formKey
+     * @param Session $session
      */
-    public function __construct(FormKey $formKey)
+    public function __construct(Session $session)
     {
-        $this->formKey = $formKey;
+        $this->session = $session;
     }
 
     /**
@@ -28,8 +28,8 @@ class Data
      *
      * @return string
      */
-    public function getFormKey(): string
+    public function getSavedDuoState(): string
     {
-        return $this->formKey->getFormKey();
+        return $this->session->getDuoState();
     }
 }
