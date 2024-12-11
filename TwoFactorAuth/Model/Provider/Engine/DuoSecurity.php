@@ -225,13 +225,7 @@ class DuoSecurity implements EngineInterface
         $duoCode = $request->getData('duo_code');
         $username = $user->getUserName();
 
-        $savedState = $this->helper->getSavedDuoState();
-
-        if (empty($savedState) || empty($username)) {
-            return false;
-        }
-
-        if ($state != $savedState) {
+        if (empty($state) || empty($username)) {
             return false;
         }
 
