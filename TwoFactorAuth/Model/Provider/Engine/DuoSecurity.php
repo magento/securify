@@ -10,9 +10,9 @@ namespace Magento\TwoFactorAuth\Model\Provider\Engine;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\UrlInterface;
+use Magento\TwoFactorAuth\Helper\Data as TwoFactorAuthHelper;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
 use Duo\DuoUniversal\Client;
@@ -104,15 +104,15 @@ class DuoSecurity implements EngineInterface
     private $urlBuilder;
 
     /**
-     * @var FormKey
+     * @var TwoFactorAuthHelper
      */
-    private $formKey;
+    private $helper;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
      * @param EncryptorInterface $encryptor
      * @param UrlInterface $urlBuilder
-     * @param FormKey $formKey
+     * @param TwoFactorAuthHelper $helper
      * @param Client|null $client
      * @param DuoAuth|null $duoAuth
      * @throws \Duo\DuoUniversal\DuoException
@@ -121,24 +121,26 @@ class DuoSecurity implements EngineInterface
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
+        TwoFactorAuthHelper $helper,
         Client $client = null,
         DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
+        $this->helper = $helper;
         if ($this->isDuoForcedProvider()) {
             $this->client = $client ?? new Client(
-                    $this->getClientId(),
-                    $this->getClientSecret(),
-                    $this->getApiHostname(),
-                    $this->getCallbackUrl()
-                );
+                $this->getClientId(),
+                $this->getClientSecret(),
+                $this->getApiHostname(),
+                $this->getCallbackUrl()
+            );
             $this->duoAuth = $duoAuth ?? new DuoAuth(
-                    $this->getIkey(),
-                    $this->getSkey(),
-                    $this->getApiHostname()
-                );
+                $this->getIkey(),
+                $this->getSkey(),
+                $this->getApiHostname()
+            );
         }
     }
 
@@ -227,9 +229,13 @@ class DuoSecurity implements EngineInterface
             return false;
         }
 
+        if ($this->helper->getFormKey() . self::AUTH_SUFFIX != $savedState) {
+            return false;
+        }
+
         try {
-            // Not saving token as this is just for verificaiton purpose
-            $decoded_token = $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
+            // Not saving token as this is for verification purpose
+            $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
         } catch (LocalizedException $e) {
             return false;
         }
@@ -237,6 +243,9 @@ class DuoSecurity implements EngineInterface
         return true;
     }
 
+    /**
+     * Check if Duo is selected as forced provider
+     */
     private function isDuoForcedProvider(): bool
     {
         $providers = $this->scopeConfig->getValue('twofactorauth/general/force_providers') ?? '';
