@@ -122,13 +122,17 @@ class Authpost extends AbstractAction implements HttpGetActionInterface
     public function execute()
     {
         $user = $this->getUser();
+        $username = $user->getUserName();
+        $savedState = $this->session->getDuoState();
 
-        if ($this->duoSecurity->verify($user, $this->dataObjectFactory->create([
-            'data' => $this->getRequest()->getParams(),
-        ]))) {
-            $this->tfa->getProvider(DuoSecurity::CODE)->activate((int) $user->getId());
-            $this->tfaSession->grantAccess();
-            return $this->_redirect($this->context->getBackendUrl()->getStartupPageUrl());
+        if (!empty($savedState) && !empty($username) && ($this->getRequest()->getParam('state') == $savedState)) {
+            if ($this->duoSecurity->verify($user, $this->dataObjectFactory->create([
+                'data' => $this->getRequest()->getParams(),
+            ]))) {
+                $this->tfa->getProvider(DuoSecurity::CODE)->activate((int) $user->getId());
+                $this->tfaSession->grantAccess();
+                return $this->_redirect($this->context->getBackendUrl()->getStartupPageUrl());
+            }
         } else {
             $this->alert->event(
                 'Magento_TwoFactorAuth',

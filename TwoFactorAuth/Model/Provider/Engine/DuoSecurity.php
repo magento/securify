@@ -12,7 +12,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\UrlInterface;
-use Magento\TwoFactorAuth\Helper\Data as TwoFactorAuthHelper;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
 use Duo\DuoUniversal\Client;
@@ -104,15 +103,9 @@ class DuoSecurity implements EngineInterface
     private $urlBuilder;
 
     /**
-     * @var TwoFactorAuthHelper
-     */
-    private $helper;
-
-    /**
      * @param ScopeConfigInterface $scopeConfig
      * @param EncryptorInterface $encryptor
      * @param UrlInterface $urlBuilder
-     * @param TwoFactorAuthHelper $helper
      * @param Client|null $client
      * @param DuoAuth|null $duoAuth
      * @throws \Duo\DuoUniversal\DuoException
@@ -121,14 +114,12 @@ class DuoSecurity implements EngineInterface
         ScopeConfigInterface $scopeConfig,
         EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
-        TwoFactorAuthHelper $helper,
         Client $client = null,
         DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
-        $this->helper = $helper;
         if ($this->isDuoForcedProvider()) {
             $this->client = $client ?? new Client(
                 $this->getClientId(),
@@ -221,13 +212,8 @@ class DuoSecurity implements EngineInterface
      */
     public function verify(UserInterface $user, DataObject $request): bool
     {
-        $state = $request->getData('state');
         $duoCode = $request->getData('duo_code');
         $username = $user->getUserName();
-
-        if (empty($state) || empty($username)) {
-            return false;
-        }
 
         try {
             // Not saving token as this is for verification purpose
@@ -289,6 +275,8 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
+     * Generate a state for Duo Universal prompt
+     *
      * @return string
      */
     public function generateDuoState() : string

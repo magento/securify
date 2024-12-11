@@ -82,6 +82,7 @@ class Auth extends Template
         }
         $username = $user->getUserName();
         $state = $this->duoSecurity->generateDuoState();
+        $this->session->setDuoState($state);
         $prompt_uri = $this->duoSecurity->initiateAuth($username, $state);
         $this->jsLayout['components']['tfa-auth']['authUrl'] = $prompt_uri;
         return parent::getJsLayout();
