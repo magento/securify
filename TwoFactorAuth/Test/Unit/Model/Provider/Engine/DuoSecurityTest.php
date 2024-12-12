@@ -9,9 +9,7 @@ declare(strict_types=1);
 namespace Magento\TwoFactorAuth\Test\Unit\Model\Provider\Engine;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\DataObject;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\UrlInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
 use Magento\User\Api\Data\UserInterface;
@@ -25,14 +23,8 @@ class DuoSecurityTest extends TestCase
     /** @var MockObject|ScopeConfigInterface */
     private $configMock;
 
-    /** @var MockObject|EncryptorInterface */
-    private $encryptorMock;
-
     /** @var MockObject|UrlInterface */
     private $urlMock;
-
-    /** @var MockObject|FormKey */
-    private $formKeyMock;
 
     /** @var MockObject|Client */
     private $clientMock;
@@ -51,15 +43,7 @@ class DuoSecurityTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->encryptorMock = $this->getMockBuilder(EncryptorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->urlMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formKeyMock = $this->getMockBuilder(FormKey::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -68,9 +52,7 @@ class DuoSecurityTest extends TestCase
 
         $this->model = new DuoSecurity(
             $this->configMock,
-            $this->encryptorMock,
             $this->urlMock,
-            $this->formKeyMock,
             $this->clientMock,
             $this->duoAuthMock
         );
@@ -88,7 +70,6 @@ class DuoSecurityTest extends TestCase
                 'test.duosecurity.com',
                 'ABCDEFGHIJKLMNOPQRST',
                 'abcdefghijklmnopqrstuvwxyz0123456789abcd',
-                '0:3:pE7QRAv43bvos7oeve+ULjQ1QCoZw0NMXXtHZtYdmlBR4Nb18IpauosSz1jKFYjo1nPCsOwHk1mOlFpGObrzpSb3zF0=',
                 'google,duo_security,authy',
                 true
             ]
@@ -108,8 +89,7 @@ class DuoSecurityTest extends TestCase
     public function testIsEnabled(
         ?string $apiHostname,
         ?string $clientId,
-        ?string $encryptedClientSecret,
-        ?string $decryptedClientSecret,
+        ?string $clientSecret,
         string $forceProviders,
         bool $expected
     ): void {
@@ -117,16 +97,10 @@ class DuoSecurityTest extends TestCase
             [
                 [DuoSecurity::XML_PATH_API_HOSTNAME, 'default', null, $apiHostname],
                 [DuoSecurity::XML_PATH_CLIENT_ID, 'default', null, $clientId],
-                [DuoSecurity::XML_PATH_CLIENT_SECRET, 'default', null, $encryptedClientSecret],
+                [DuoSecurity::XML_PATH_CLIENT_SECRET, 'default', null, $clientSecret],
                 ['twofactorauth/general/force_providers', 'default', null, $forceProviders]
             ]
         );
-
-        // Mocking EncryptorInterface
-        $this->encryptorMock->expects($this->any())
-            ->method('decrypt')
-            ->with($encryptedClientSecret)
-            ->willReturn($decryptedClientSecret);
 
         $this->assertEquals($expected, $this->model->isEnabled());
     }

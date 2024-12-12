@@ -21,9 +21,4 @@
     <type name="Magento\Backend\Model\Auth">
         <plugin name="delete_tfat_cookie" type="Magento\TwoFactorAuth\Plugin\DeleteCookieOnLogout"/>
     </type>
-    <type name="Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity">
-        <arguments>
-            <argument name="duoSignaturePrefix" xsi:type="const">Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity::DUO_PREFIX</argument>
-        </arguments>
-    </type>
 </config>

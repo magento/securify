@@ -55,8 +55,10 @@ class ConfigureLaterTest extends AbstractBackendController
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testNotAllowedWhenProviderAlreadyActivated(): void
@@ -73,8 +75,10 @@ class ConfigureLaterTest extends AbstractBackendController
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testNotAllowedWhenProviderNotActivatedButIsTheOnlyProvider(): void
@@ -91,8 +95,10 @@ class ConfigureLaterTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,duo_security,authy
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testSkippingAProvider(): void
@@ -110,8 +116,10 @@ class ConfigureLaterTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security,authy
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testSkippingAllProvidersWhenThereAreNoneConfigured(): void

@@ -41,9 +41,11 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testTokenAccess(): void
     {
@@ -55,9 +57,11 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testAclHasAccess()
     {
@@ -70,9 +74,11 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testAclNoAccess()
     {

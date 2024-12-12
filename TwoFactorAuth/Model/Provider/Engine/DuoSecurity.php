@@ -10,7 +10,6 @@ namespace Magento\TwoFactorAuth\Model\Provider\Engine;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\UrlInterface;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
@@ -26,21 +25,6 @@ class DuoSecurity implements EngineInterface
      * Engine code
      */
     public const CODE = 'duo_security'; // Must be the same as defined in di.xml
-
-    /**
-     * Duo request prefix
-     */
-    public const DUO_PREFIX = 'TX';
-
-    /**
-     * Duo auth prefix
-     */
-    public const AUTH_PREFIX = 'AUTH';
-
-    /**
-     * Duo auth suffix
-     */
-    public const AUTH_SUFFIX = 'DUOAUTH';
 
     /**
      * Configuration XML path for enabled flag
@@ -93,18 +77,12 @@ class DuoSecurity implements EngineInterface
     private $duoAuth;
 
     /**
-     * @var EncryptorInterface
-     */
-    private $encryptor;
-
-    /**
      * @var UrlInterface
      */
     private $urlBuilder;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
-     * @param EncryptorInterface $encryptor
      * @param UrlInterface $urlBuilder
      * @param Client|null $client
      * @param DuoAuth|null $duoAuth
@@ -112,13 +90,11 @@ class DuoSecurity implements EngineInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        EncryptorInterface $encryptor,
         UrlInterface $urlBuilder,
         Client $client = null,
         DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->encryptor = $encryptor;
         $this->urlBuilder = $urlBuilder;
         if ($this->isDuoForcedProvider()) {
             $this->client = $client ?? new Client(
@@ -152,9 +128,7 @@ class DuoSecurity implements EngineInterface
      */
     private function getClientSecret(): string
     {
-        return $this->encryptor->decrypt(
-            $this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET)
-        );
+        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET);
     }
 
     /**
@@ -218,7 +192,7 @@ class DuoSecurity implements EngineInterface
         try {
             // Not saving token as this is for verification purpose
             $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
-        } catch (LocalizedException $e) {
+        } catch (DuoException $e) {
             return false;
         }
         # Exchange happened successfully so render success page

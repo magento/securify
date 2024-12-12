@@ -66,9 +66,11 @@ class AuthenticateTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testVerifyInvalidCredentials()
@@ -88,9 +90,11 @@ class AuthenticateTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testVerifyNotConfiguredProvider()
@@ -131,9 +135,11 @@ class AuthenticateTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testVerifyValidRequest()
@@ -170,9 +176,11 @@ class AuthenticateTest extends TestCase
 
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/client_id abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
-     * @magentoConfigFixture default/twofactorauth/duo/client_secret abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
     public function testVerifyInvalidRequest()

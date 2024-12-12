@@ -143,6 +143,8 @@ class Authpost extends AbstractAction implements HttpGetActionInterface
 
             return $this->_redirect('*/*/auth');
         }
+
+        return $this->_redirect('*/*/auth');
     }
 
     /**

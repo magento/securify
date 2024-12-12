@@ -115,8 +115,10 @@ class IndexTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDbIsolation enabled
      */
@@ -134,8 +136,10 @@ class IndexTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDbIsolation enabled
      */
@@ -153,8 +157,10 @@ class IndexTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDbIsolation enabled
      */
