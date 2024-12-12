@@ -45,7 +45,7 @@ class ValidationConfig implements ValidationConfigInterface
         string $privateKey,
         string $remoteIp,
         string $validationFailureMessage,
-        ValidationConfigExtensionInterface $extensionAttributes = null
+        ?ValidationConfigExtensionInterface $extensionAttributes = null
     ) {
         $this->privateKey = $privateKey;
         $this->remoteIp = $remoteIp;

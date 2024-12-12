@@ -72,8 +72,8 @@ class ReCaptchaV3 implements ResolverInterface, ResetAfterRequestInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         return [
             'is_enabled' => $this->isEnabled(),

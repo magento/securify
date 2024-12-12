@@ -36,8 +36,8 @@ class UserConfig extends AbstractDb
     public function __construct(
         Context $context,
         $connectionName = null,
-        EncryptorInterface $encryptor = null,
-        SerializerInterface $serializer = null
+        ?EncryptorInterface $encryptor = null,
+        ?SerializerInterface $serializer = null
     ) {
         parent::__construct($context, $connectionName);
         $this->encryptor = $encryptor ?:

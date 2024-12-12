@@ -44,8 +44,8 @@ class ForceProviders extends Value
         ScopeConfigInterface $config,
         TypeListInterface $cacheTypeList,
         TfaInterface $tfa,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(

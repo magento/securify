@@ -61,8 +61,8 @@ class ReCaptchaFormConfig implements ResolverInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null,
+        ?array $value = null,
+        ?array $args = null,
     ) {
         try {
             $captchaType = $this->captchaTypeResolver->getCaptchaTypeFor($this->formTypes[$args['formType']]);

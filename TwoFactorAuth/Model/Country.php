@@ -48,8 +48,8 @@ class Country extends AbstractModel
         Registry $registry,
         DataObjectHelper $dataObjectHelper,
         CountryInterfaceFactory $countryDataFactory,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
