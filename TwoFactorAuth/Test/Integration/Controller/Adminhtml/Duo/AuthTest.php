@@ -20,12 +20,12 @@ use Magento\TwoFactorAuth\TestFramework\TestCase\AbstractConfigureBackendControl
 class AuthTest extends AbstractConfigureBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/duo/auth';
 
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $httpMethod = Request::METHOD_GET;
 

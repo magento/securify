@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Model\Provider\Engine;
 
+use Duo\DuoUniversal\DuoException;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\UrlInterface;
@@ -182,7 +183,12 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * @inheritDoc
+     * Verify the user
+     *
+     * @param UserInterface $user
+     * @param DataObject $request
+     * @return bool
+     * @throws \Duo\DuoUniversal\DuoException
      */
     public function verify(UserInterface $user, DataObject $request): bool
     {
@@ -226,15 +232,43 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * Generate URI to redirect to for the Duo Universal prompt.
+     * Initiate authentication with Duo Universal Prompt
      *
      * @param string $username
      * @param string $state
-     * @return string
+     * @return array
+     * @throws \Duo\DuoUniversal\DuoException
      */
-    public function initiateAuth($username, string $state): string
+    public function initiateAuth($username, string $state): array
     {
-        return $this->client->createAuthUrl($username, $state);
+        $duoFailMode = $this->getDuoFailmode();
+        try {
+            $this->healthCheck();
+        } catch (DuoException $e) {
+            if ($duoFailMode === "OPEN") {
+                return [
+                    'status' => 'open',
+                    'redirect_url' => '',
+                    'message' => __(
+                        "Login 'applicable',
+                    but 2FA Not Performed. Switch to other 2FA Provider.
+                    Confirm Duo client/secret/host values are correct"
+                    )
+                ];
+            } else {
+                return [
+                    'status' => 'closed',
+                    'redirect_url' => '',
+                    'message' => __("2FA Unavailable. Confirm Duo client/secret/host values are correct")
+                ];
+            }
+        }
+
+        return [
+            'status' => 'success',
+            'redirect_url' => $this->client->createAuthUrl($username, $state),
+            'message' => __('Duo Auth URL created successfully.')
+        ];
     }
 
     /**

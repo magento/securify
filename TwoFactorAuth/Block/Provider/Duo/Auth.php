@@ -59,23 +59,6 @@ class Auth extends Template
      */
     public function getJsLayout()
     {
-        $duoFailMode = $this->duoSecurity->getDuoFailmode();
-        try {
-            $this->duoSecurity->healthCheck();
-        } catch (LocalizedException $e) {
-            if ($duoFailMode === "OPEN") {
-                $this->messageManager->addSuccessMessage(
-                    __("Login 'Successful', but 2FA Not Performed. Confirm Duo client/secret/host values are correct")
-                );
-                return $this->_url->getUrl('adminhtml/dashboard');
-            } else {
-                $this->messageManager->addErrorMessage(
-                    __("2FA Unavailable. Confirm Duo client/secret/host values are correct")
-                );
-                return $this->_url->getUrl('adminhtml');
-            }
-        }
-
         $user = $this->session->getUser();
         if (!$user) {
             throw new LocalizedException(__('User session not found.'));
@@ -83,8 +66,15 @@ class Auth extends Template
         $username = $user->getUserName();
         $state = $this->duoSecurity->generateDuoState();
         $this->session->setDuoState($state);
-        $prompt_uri = $this->duoSecurity->initiateAuth($username, $state);
-        $this->jsLayout['components']['tfa-auth']['authUrl'] = $prompt_uri;
+        $response = $this->duoSecurity->initiateAuth($username, $state);
+
+        if ($response['status'] == 'open') {
+            $this->messageManager->addErrorMessage($response['message']);
+        } elseif ($response['status'] == 'closed') {
+            $this->messageManager->addErrorMessage($response['message']);
+        }
+
+        $this->jsLayout['components']['tfa-auth']['authUrl'] = $response['redirect_url'];
         return parent::getJsLayout();
     }
 }

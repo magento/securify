@@ -26,7 +26,7 @@ use Magento\TwoFactorAuth\Api\UserConfigManagerInterface;
 class IndexTest extends AbstractBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/tfa/index';
 

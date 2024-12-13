@@ -21,12 +21,12 @@ use Magento\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
 class ConfigureLaterTest extends AbstractBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/tfa/configurelater';
 
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $resource = 'Magento_TwoFactorAuth::tfa';
 
