@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2024 Adobe
+ * Copyright 2020 Adobe
  * All Rights Reserved.
  */
 
@@ -67,15 +67,20 @@ class Configure implements DuoConfigureInterface
 
     /**
      * @inheritDoc
+     * @throws \LocalizedException
      */
     public function activate(string $tfaToken): void
     {
-        $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
-        $userId = (int)$user->getId();
+        try {
+            $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
+            $userId = (int)$user->getId();
 
-        if ($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
-            $this->tfa->getProviderByCode(DuoSecurity::CODE)
-                ->activate($userId);
+            if ($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
+                $this->tfa->getProviderByCode(DuoSecurity::CODE)
+                    ->activate($userId);
+            }
+        } catch (\Exception $e) {
+            throw new \LocalizedException(__('Could not activate Duo Security provider.'));
         }
     }
 }
