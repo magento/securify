@@ -269,13 +269,12 @@ class ConfigureTest extends TestCase
         $userId = $this->getUserId();
         $tfat = $this->tokenManager->issueFor($userId);
 
-        $this->duo->method('assertUserIsValid')
-            ->with($this->callback(function ($username) use ($userId) {
-                // Assuming $username corresponds to a user object or username string.
-                // Replace 'getUserById' with the relevant logic for obtaining the username
-                $user = $this->userFactory->create()->load($userId);
-                return $username === $user->getUserName();
-            }))
+        $userName = 'adminUser';
+
+        $this->duo
+            ->expects($this->once())
+            ->method('assertUserIsValid')
+            ->with($userName)
             ->willThrowException(new \InvalidArgumentException('Something'));
 
         // Call activate without a signature, as per your updated logic

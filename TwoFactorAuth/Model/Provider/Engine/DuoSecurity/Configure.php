@@ -67,20 +67,15 @@ class Configure implements DuoConfigureInterface
 
     /**
      * @inheritDoc
-     * @throws \LocalizedException
      */
     public function activate(string $tfaToken): void
     {
-        try {
-            $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
-            $userId = (int)$user->getId();
+        $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
+        $userId = (int)$user->getId();
 
-            if ($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
-                $this->tfa->getProviderByCode(DuoSecurity::CODE)
-                    ->activate($userId);
-            }
-        } catch (\Exception $e) {
-            throw new \LocalizedException(__('Could not activate Duo Security provider.'));
+        if ($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
+            $this->tfa->getProviderByCode(DuoSecurity::CODE)
+                ->activate($userId);
         }
     }
 }
