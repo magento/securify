@@ -10,7 +10,6 @@ namespace Magento\TwoFactorAuth\Test\Integration\Model\Provider\Engine\DuoSecuri
 
 use Magento\Framework\App\ObjectManager;
 use Magento\TestFramework\Bootstrap;
-use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
 use Magento\TwoFactorAuth\Api\TfaInterface;
 use Magento\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
@@ -52,10 +51,10 @@ class AuthenticateTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = ObjectManager::getInstance();
-        $this->userFactory = $objectManager->get(UserFactory::class);
         $this->tokenManager = $objectManager->get(UserConfigTokenManagerInterface::class);
         $this->tfa = $objectManager->get(TfaInterface::class);
         $this->duo = $this->createMock(DuoSecurity::class);
+        $this->userFactory = $objectManager->get(UserFactory::class);
         $this->model = $objectManager->create(
             Authenticate::class,
             [
