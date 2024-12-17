@@ -12,20 +12,11 @@ define([
     'use strict';
 
     return function (config, element) {
+
         var $element = $(element),
             initialValue = $element.val(),
             duoProviderValue = config.duoProviderValue,
             duoFields = config.duoFields;
-
-        $element.on('change', function () {
-            var selectedValues = $element.val() || [];
-
-            if (selectedValues.includes(duoProviderValue)) {
-                addRequiredAttributes(duoFields);
-            } else {
-                removeRequiredAttributes(duoFields);
-            }
-        });
 
         /**
          * Adds the "required" attribute to each Duo field
@@ -35,6 +26,7 @@ define([
         function addRequiredAttributes(fields) {
             fields.forEach(function (fieldId) {
                 var $field = $('#' + fieldId);
+
                 if ($field.length) {
                     $field.attr('required', 'required');
                     $field.addClass('required-entry');
@@ -50,12 +42,23 @@ define([
         function removeRequiredAttributes(fields) {
             fields.forEach(function (fieldId) {
                 var $field = $('#' + fieldId);
+
                 if ($field.length) {
                     $field.removeAttr('required');
                     $field.removeClass('required-entry');
                 }
             });
         }
+
+        $element.on('change', function () {
+            var selectedValues = $element.val() || [];
+
+            if (selectedValues.includes(duoProviderValue)) {
+                addRequiredAttributes(duoFields);
+            } else {
+                removeRequiredAttributes(duoFields);
+            }
+        });
 
         element.on('blur', function () {
             var currentValue = $element.val();

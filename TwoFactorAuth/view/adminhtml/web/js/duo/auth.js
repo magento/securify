@@ -24,6 +24,7 @@ define([
 
         redirectToAuthUrl: function () {
             var redirectUrl = this.getAuthUrl();
+
             if (redirectUrl) {
                 window.location.href = redirectUrl;
             }
@@ -33,7 +34,7 @@ define([
          * After the element is rendered, bind the authUrl (optional)
          */
         onAfterRender: function () {
-            var authUrl = this.getAuthUrl();
+            // Not Required
         }
     });
 });
