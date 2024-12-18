@@ -1,11 +1,17 @@
 {
     "name": "magento/module-re-captcha-validation",
     "description": "Google reCAPTCHA integration for Magento2",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:phpfui/recaptcha.git"
+        }
+    ],
     "require": {
         "php": "~8.2.0||~8.3.0||~8.4.0",
         "magento/framework": "*",
         "magento/module-re-captcha-validation-api": "*",
-        "google/recaptcha": "^1.2"
+        "google/recaptcha": "dev-PHP84"
     },
     "type": "magento2-module",
     "license": "OSL-3.0",
