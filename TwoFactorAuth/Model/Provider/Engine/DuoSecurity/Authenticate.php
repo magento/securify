@@ -12,6 +12,8 @@ use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Integration\Api\AdminTokenServiceInterface;
+use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
+use Magento\TwoFactorAuth\Api\Data\DuoDataInterfaceFactory;
 use Magento\TwoFactorAuth\Api\DuoAuthenticateInterface;
 use Magento\TwoFactorAuth\Model\AlertInterface;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
@@ -45,6 +47,11 @@ class Authenticate implements DuoAuthenticateInterface
     private $adminTokenService;
 
     /**
+     * @var DuoDataInterfaceFactory
+     */
+    private $dataFactory;
+
+    /**
      * @var DataObjectFactory
      */
     private $dataObjectFactory;
@@ -59,6 +66,7 @@ class Authenticate implements DuoAuthenticateInterface
      * @param AlertInterface $alert
      * @param DuoSecurity $duo
      * @param AdminTokenServiceInterface $adminTokenService
+     * @param DuoDataInterfaceFactory $dataFactory
      * @param DataObjectFactory $dataObjectFactory
      * @param UserAuthenticator $userAuthenticator
      */
@@ -67,6 +75,7 @@ class Authenticate implements DuoAuthenticateInterface
         AlertInterface $alert,
         DuoSecurity $duo,
         AdminTokenServiceInterface $adminTokenService,
+        DuoDataInterfaceFactory $dataFactory,
         DataObjectFactory $dataObjectFactory,
         UserAuthenticator $userAuthenticator
     ) {
@@ -74,6 +83,7 @@ class Authenticate implements DuoAuthenticateInterface
         $this->alert = $alert;
         $this->duo = $duo;
         $this->adminTokenService = $adminTokenService;
+        $this->dataFactory = $dataFactory;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->userAuthenticator = $userAuthenticator;
     }
@@ -81,7 +91,75 @@ class Authenticate implements DuoAuthenticateInterface
     /**
      * @inheritDoc
      */
+    public function getAuthenticateData(string $username, string $password): DuoDataInterface
+    {
+        $this->adminTokenService->createAdminAccessToken($username, $password);
+
+        $user = $this->getUser($username);
+        $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
+
+        return $this->dataFactory->create(
+            [
+                'data' => [
+                    DuoDataInterface::API_HOSTNAME => $this->duo->getApiHostname(),
+                    DuoDataInterface::SIGNATURE => $this->duo->getRequestSignature($user)
+                ]
+            ]
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function createAdminAccessTokenWithCredentials(
+        string $username,
+        string $password,
+        string $signatureResponse
+    ): string {
+        $token = $this->adminTokenService->createAdminAccessToken($username, $password);
+
+        $user = $this->getUser($username);
+        $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
+
+        $this->assertResponseIsValid($user, $signatureResponse);
+
+        return $token;
+    }
+
+    /**
+     * Assert that the given signature is valid for the user
+     *
+     * @deprecated This method is deprecated and will be removed in a future release.
+     * @see assertResponseIsValidForPasscode
+     * @param UserInterface $user
+     * @param string $signatureResponse
+     * @throws LocalizedException
+     */
+    public function assertResponseIsValid(UserInterface $user, string $signatureResponse): void
+    {
+        $data = $this->dataObjectFactory->create(
+            [
+                'data' => [
+                    'sig_response' => $signatureResponse
+                ]
+            ]
+        );
+        if (!$this->duo->verify($user, $data)) {
+            $this->alert->event(
+                'Magento_TwoFactorAuth',
+                'DuoSecurity invalid auth',
+                AlertInterface::LEVEL_WARNING,
+                $user->getUserName()
+            );
+
+            throw new LocalizedException(__('Invalid response'));
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createAdminAccessTokenWithCredentialsAndPasscode(
         string $username,
         string $password,
         string $passcode
@@ -91,7 +169,7 @@ class Authenticate implements DuoAuthenticateInterface
         $user = $this->getUser($username);
         $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
 
-        $this->assertResponseIsValid($user, $username, $passcode);
+        $this->assertResponseIsValidForPasscode($user, $username, $passcode);
 
         return $token;
     }
@@ -105,7 +183,7 @@ class Authenticate implements DuoAuthenticateInterface
      * @return void
      * @throws LocalizedException
      */
-    public function assertResponseIsValid(UserInterface $user, $username, string $passcode): void
+    public function assertResponseIsValidForPasscode(UserInterface $user, $username, string $passcode): void
     {
         $duoAuthResponse = $this->duo->authorizeUser($username, "passcode", ['passcode' => $passcode]);
         if ($duoAuthResponse['status'] !== 'allow') {
