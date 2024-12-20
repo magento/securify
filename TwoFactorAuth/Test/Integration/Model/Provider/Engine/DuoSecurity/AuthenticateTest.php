@@ -80,7 +80,7 @@ class AuthenticateTest extends TestCase
         $this->duo
             ->expects($this->never())
             ->method('authorizeUser');
-        $this->model->createAdminAccessTokenWithCredentials(
+        $this->model->createAdminAccessTokenWithCredentialsAndPasscode(
             'adminUser',
             'abc',
             '123456'
@@ -107,7 +107,7 @@ class AuthenticateTest extends TestCase
         $this->duo
             ->expects($this->never())
             ->method('authorizeUser');
-        $this->model->createAdminAccessTokenWithCredentials(
+        $this->model->createAdminAccessTokenWithCredentialsAndPasscode(
             'adminUser',
             Bootstrap::ADMIN_PASSWORD,
             '123456'
@@ -125,7 +125,7 @@ class AuthenticateTest extends TestCase
         $this->duo
             ->expects($this->never())
             ->method('authorizeUser');
-        $this->model->createAdminAccessTokenWithCredentials(
+        $this->model->createAdminAccessTokenWithCredentialsAndPasscode(
             'adminUser',
             Bootstrap::ADMIN_PASSWORD,
             '123456'
@@ -163,7 +163,7 @@ class AuthenticateTest extends TestCase
             ->willReturn(['status' => 'allow']);
 
         // Attempt to create the access token
-        $token = $this->model->createAdminAccessTokenWithCredentials(
+        $token = $this->model->createAdminAccessTokenWithCredentialsAndPasscode(
             $username,
             $password,
             $passcode
@@ -207,7 +207,7 @@ class AuthenticateTest extends TestCase
             ->willReturn(['status' => 'deny', 'msg' => 'Authentication denied']); // Simulate invalid response
 
         // Attempt to create the access token, expecting an exception due to the invalid response
-        $this->model->createAdminAccessTokenWithCredentials(
+        $this->model->createAdminAccessTokenWithCredentialsAndPasscode(
             $username,
             $password,
             $passcode

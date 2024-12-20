@@ -79,14 +79,14 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testGetConfigurationDataInvalidTfat()
+    public function testGetDuoConfigurationDataInvalidTfat()
     {
         $this->expectException(\Magento\Framework\Exception\AuthorizationException::class);
         $this->expectExceptionMessage('Invalid two-factor authorization token');
         $this->duo
             ->expects($this->never())
             ->method('enrollNewUser');
-        $this->model->getConfigurationData(
+        $this->model->getDuoConfigurationData(
             'abc'
         );
     }
@@ -100,7 +100,7 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testGetConfigurationDataAlreadyConfiguredProvider()
+    public function testGetDuoConfigurationDataAlreadyConfiguredProvider()
     {
         $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
         $this->expectExceptionMessage('Provider is already configured.');
@@ -111,7 +111,7 @@ class ConfigureTest extends TestCase
         $this->duo
             ->expects($this->never())
             ->method('enrollNewUser');
-        $this->model->getConfigurationData(
+        $this->model->getDuoConfigurationData(
             $this->tokenManager->issueFor($userId)
         );
     }
@@ -120,14 +120,14 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/general/force_providers authy
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testGetConfigurationDataUnavailableProvider()
+    public function testGetDuoConfigurationDataUnavailableProvider()
     {
         $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
         $this->expectExceptionMessage('Provider is not allowed.');
         $this->duo
             ->expects($this->never())
             ->method('enrollNewUser');
-        $this->model->getConfigurationData(
+        $this->model->getDuoConfigurationData(
             $this->tokenManager->issueFor($this->getUserId())
         );
     }
@@ -141,14 +141,14 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testActivateInvalidTfat()
+    public function testDuoActivateInvalidTfat()
     {
         $this->expectException(\Magento\Framework\Exception\AuthorizationException::class);
         $this->expectExceptionMessage('Invalid two-factor authorization token');
         $this->duo
             ->expects($this->never())
             ->method('assertUserIsValid');
-        $this->model->activate(
+        $this->model->duoActivate(
             'abc',
             'something'
         );
@@ -163,7 +163,7 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testActivateAlreadyConfiguredProvider()
+    public function testDuoActivateAlreadyConfiguredProvider()
     {
         $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
         $this->expectExceptionMessage('Provider is already configured.');
@@ -173,7 +173,7 @@ class ConfigureTest extends TestCase
         $this->duo
             ->expects($this->never())
             ->method('assertUserIsValid');
-        $this->model->activate(
+        $this->model->duoActivate(
             $this->tokenManager->issueFor($userId),
             'something'
         );
@@ -183,7 +183,7 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/general/force_providers authy
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testActivateUnavailableProvider()
+    public function testDuoActivateUnavailableProvider()
     {
         $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
         $this->expectExceptionMessage('Provider is not allowed.');
@@ -191,7 +191,7 @@ class ConfigureTest extends TestCase
         $this->duo
             ->expects($this->never())
             ->method('assertUserIsValid');
-        $this->model->activate(
+        $this->model->duoActivate(
             $this->tokenManager->issueFor($userId),
             'something'
         );
@@ -206,7 +206,7 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testGetConfigurationDataValidRequest()
+    public function testGetDuoConfigurationDataValidRequest()
     {
         $userId = $this->getUserId();
         $userName = 'adminUser';
@@ -217,7 +217,7 @@ class ConfigureTest extends TestCase
             ->with($userName, 60)
             ->willReturn('enrollment_data');
 
-        $result = $this->model->getConfigurationData(
+        $result = $this->model->getDuoConfigurationData(
             $this->tokenManager->issueFor($userId)
         );
 
@@ -233,7 +233,7 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testActivateValidRequest()
+    public function testDuoActivateValidRequest()
     {
         $userId = $this->getUserId();
         $userName = 'adminUser';
@@ -244,7 +244,7 @@ class ConfigureTest extends TestCase
             ->with($userName)
             ->willReturn('auth');
 
-        $this->model->activate(
+        $this->model->duoActivate(
             $this->tokenManager->issueFor($userId)
         );
 
@@ -260,7 +260,7 @@ class ConfigureTest extends TestCase
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDataFixture Magento/User/_files/user_with_role.php
      */
-    public function testActivateInvalidDataThrowsException()
+    public function testDuoActivateInvalidDataThrowsException()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Something');
@@ -277,7 +277,7 @@ class ConfigureTest extends TestCase
             ->willThrowException(new \InvalidArgumentException('Something'));
 
         // Call activate without a signature, as per your updated logic
-        $result = $this->model->activate($tfat);
+        $result = $this->model->duoActivate($tfat);
 
         self::assertEmpty($result);
     }

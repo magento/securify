@@ -10,6 +10,8 @@ namespace Magento\TwoFactorAuth\Controller\Adminhtml\Duo;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\TwoFactorAuth\Api\TfaInterface;
 use Magento\TwoFactorAuth\Api\UserConfigManagerInterface;
@@ -49,12 +51,26 @@ class Auth extends AbstractAction implements HttpGetActionInterface
     private $tokenVerifier;
 
     /**
+     * @var DuoSecurity
+     */
+    private $duoSecurity;
+    /**
+     * @var ManagerInterface
+     */
+    protected $messageManager;
+    /**
+     * @var RedirectFactory
+     */
+    protected $resultRedirectFactory;
+
+    /**
      * @param Action\Context $context
      * @param Session $session
      * @param PageFactory $pageFactory
      * @param UserConfigManagerInterface $userConfigManager
      * @param TfaInterface $tfa
      * @param HtmlAreaTokenVerifier $tokenVerifier
+     * @param DuoSecurity $duoSecurity
      */
     public function __construct(
         Action\Context $context,
@@ -62,7 +78,8 @@ class Auth extends AbstractAction implements HttpGetActionInterface
         PageFactory $pageFactory,
         UserConfigManagerInterface $userConfigManager,
         TfaInterface $tfa,
-        HtmlAreaTokenVerifier $tokenVerifier
+        HtmlAreaTokenVerifier $tokenVerifier,
+        DuoSecurity $duoSecurity
     ) {
         parent::__construct($context);
         $this->tfa = $tfa;
@@ -70,6 +87,9 @@ class Auth extends AbstractAction implements HttpGetActionInterface
         $this->pageFactory = $pageFactory;
         $this->userConfigManager = $userConfigManager;
         $this->tokenVerifier = $tokenVerifier;
+        $this->duoSecurity = $duoSecurity;
+        $this->messageManager = $context->getMessageManager();
+        $this->resultRedirectFactory = $context->getResultRedirectFactory();
     }
 
     /**
@@ -87,8 +107,31 @@ class Auth extends AbstractAction implements HttpGetActionInterface
      */
     public function execute()
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->messageManager->addErrorMessage(__('User session not found.'));
+        }
         $this->userConfigManager->setDefaultProvider((int)$this->getUser()->getId(), DuoSecurity::CODE);
-        return $this->pageFactory->create();
+
+        $username = $this->getUser()->getUserName();
+        $state = $this->duoSecurity->generateDuoState();
+        $this->session->setDuoState($state);
+        $response = $this->duoSecurity->initiateAuth($username, $state);
+        if ($response['status'] === 'open') {
+            // If fail mode is "open", skip the Duo prompt.
+            $this->messageManager->addErrorMessage($response['message']);
+        }
+        if ($response['status'] === 'closed') {
+            // If fail mode is "closed", show an error message.
+            $this->messageManager->addErrorMessage($response['message']);
+        }
+
+        $resultPage = $this->pageFactory->create();
+        $block = $resultPage->getLayout()->getBlock('content');
+        if ($block) {
+            $block->setData('auth_url', $response['redirect_url']);
+        }
+        return $resultPage;
     }
 
     /**
