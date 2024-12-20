@@ -52,7 +52,6 @@ class AuthTest extends AbstractConfigureBackendController
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/duo_failmode open
      * phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod
      */
     public function testAclHasAccess()
@@ -68,7 +67,6 @@ class AuthTest extends AbstractConfigureBackendController
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
      * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/duo_failmode open
      * phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod
      */
     public function testAclNoAccess()

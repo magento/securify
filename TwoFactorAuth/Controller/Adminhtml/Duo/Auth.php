@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Controller\Adminhtml\Duo;
@@ -117,12 +118,8 @@ class Auth extends AbstractAction implements HttpGetActionInterface
         $state = $this->duoSecurity->generateDuoState();
         $this->session->setDuoState($state);
         $response = $this->duoSecurity->initiateAuth($username, $state);
-        if ($response['status'] === 'open') {
-            // If fail mode is "open", skip the Duo prompt.
-            $this->messageManager->addErrorMessage($response['message']);
-        }
-        if ($response['status'] === 'closed') {
-            // If fail mode is "closed", show an error message.
+        if ($response['status'] === 'failure') {
+            // if health check fails, skip the Duo prompt and choose different 2FA.
             $this->messageManager->addErrorMessage($response['message']);
         }
 

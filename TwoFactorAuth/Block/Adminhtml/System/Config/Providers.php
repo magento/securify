@@ -53,7 +53,6 @@ class Providers extends Field
                         'twofactorauth_duo_client_id',
                         'twofactorauth_duo_client_secret',
                         'twofactorauth_duo_api_hostname',
-                        'twofactorauth_duo_failmode',
                         'twofactorauth_duo_integration_key',
                         'twofactorauth_duo_secret_key',
                     ]

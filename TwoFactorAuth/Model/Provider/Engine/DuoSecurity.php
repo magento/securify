@@ -58,11 +58,6 @@ class DuoSecurity implements EngineInterface
     public const XML_PATH_SKEY = 'twofactorauth/duo/secret_key';
 
     /**
-     * Configuration path for Duo Mode
-     */
-    public const DUO_FAILMODE = 'twofactorauth/duo/duo_failmode';
-
-    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
@@ -140,16 +135,6 @@ class DuoSecurity implements EngineInterface
     private function getClientId(): string
     {
         return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_ID);
-    }
-
-    /**
-     * Get Duo Mode
-     *
-     * @return string
-     */
-    public function getDuoFailmode(): string
-    {
-        return strtoupper($this->scopeConfig->getValue(static::DUO_FAILMODE));
     }
 
     /**
@@ -241,27 +226,14 @@ class DuoSecurity implements EngineInterface
      */
     public function initiateAuth($username, string $state): array
     {
-        $duoFailMode = $this->getDuoFailmode();
         try {
             $this->healthCheck();
         } catch (DuoException $e) {
-            if ($duoFailMode === "OPEN") {
                 return [
-                    'status' => 'open',
-                    'redirect_url' => '',
-                    'message' => __(
-                        "Login 'applicable',
-                    but 2FA Not Performed. Switch to other 2FA Provider.
-                    Confirm Duo client/secret/host values are correct"
-                    )
-                ];
-            } else {
-                return [
-                    'status' => 'closed',
+                    'status' => 'failure',
                     'redirect_url' => '',
                     'message' => __("2FA Unavailable. Confirm Duo client/secret/host values are correct")
                 ];
-            }
         }
 
         return [

@@ -78,11 +78,6 @@
                     <label>API hostname</label>
                     <backend_model>Magento\TwoFactorAuth\Model\Config\Backend\Duo\ApiHostname</backend_model>
                 </field>
-                <field id="duo_failmode" translate="label comment" type="select" sortOrder="50" showInDefault="1"
-                       showInWebsite="0" showInStore="0">
-                    <label>Duo Failmode</label>
-                    <source_model>Magento\TwoFactorAuth\Model\Config\Source\DuoFailmode</source_model>
-                </field>
                 <field id="integration_key" translate="label comment" type="text" sortOrder="60" showInDefault="1"
                        showInWebsite="0" showInStore="0">
                     <label>Integration Key</label>

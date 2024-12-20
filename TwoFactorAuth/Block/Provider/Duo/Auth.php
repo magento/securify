@@ -11,12 +11,18 @@ namespace Magento\TwoFactorAuth\Block\Provider\Duo;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
 
 /**
  * @api
  */
 class Auth extends Template
 {
+    /**
+     * @var DuoSecurity
+     */
+    private $duoSecurity;
+
     /**
      * @var Session
      */
@@ -25,14 +31,17 @@ class Auth extends Template
     /**
      * @param Template\Context $context
      * @param Session $session
+     * @param DuoSecurity $duoSecurity
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
         Session $session,
+        DuoSecurity $duoSecurity,
         array $data = []
     ) {
         parent::__construct($context, $data);
+        $this->duoSecurity = $duoSecurity;
         $this->session = $session;
     }
 
