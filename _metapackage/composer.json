@@ -5,7 +5,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:magento-commerce/recaptcha.git"
+            "url": "git@github.com:magento-commerce/magento-recaptcha.git"
         }
     ],
     "require": {
@@ -34,7 +34,7 @@
         "magento/module-re-captcha-webapi-ui": "*",
         "magento/module-securitytxt": "*",
         "magento/module-two-factor-auth": "*",
-        "google/recaptcha": "dev-develop",
+        "magento/recaptcha": "dev-develop",
         "magento/module-re-captcha-checkout-sales-rule": "*"
     }
 }
