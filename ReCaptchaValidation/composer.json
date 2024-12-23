@@ -4,14 +4,14 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:phpfui/recaptcha.git"
+            "url": "git@github.com:magento-commerce/recaptcha.git"
         }
     ],
     "require": {
         "php": "~8.2.0||~8.3.0||~8.4.0",
         "magento/framework": "*",
         "magento/module-re-captcha-validation-api": "*",
-        "google/recaptcha": "dev-PHP84"
+        "google/recaptcha": "dev-develop"
     },
     "type": "magento2-module",
     "license": "OSL-3.0",
