@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -95,7 +96,7 @@ class HtmlAreaTokenVerifierTest extends TestCase
      *
      * @return array
      */
-    public function getTokenRequestData(): array
+    public static function getTokenRequestData(): array
     {
         return [
             'token in query' => [

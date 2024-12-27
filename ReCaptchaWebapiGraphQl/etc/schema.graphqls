@@ -1,4 +1,4 @@
-# Copyright © Magento, Inc. All rights reserved.
+# Copyright 2024 Adobe All rights reserved.
 # See COPYING.txt for license details.
 
 type Query {
@@ -50,4 +50,5 @@ type ReCaptchaConfigurationV3 @doc(description: "Contains reCAPTCHA V3-Invisible
     language_code: String @doc(description: "A two-character code that specifies the language that is used for Google reCAPTCHA text and messaging.")
     failure_message: String! @doc(description: "The message that appears to the user if validation fails.")
     forms: [ReCaptchaFormEnum!]! @doc(description: "A list of forms on the storefront that have been configured to use reCAPTCHA V3.")
+    theme: String! @doc(description: "Theme to be used to render reCaptcha.")
 }

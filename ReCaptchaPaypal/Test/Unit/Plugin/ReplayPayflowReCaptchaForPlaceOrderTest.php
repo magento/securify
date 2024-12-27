@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 declare(strict_types=1);
@@ -96,13 +97,13 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function afterGetConfigForDataProvider(): array
+    public static function afterGetConfigForDataProvider(): array
     {
         return [
             [
                 [
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->never()]
+                        ['method' => 'isValid', 'expects' => self::never()]
                     ]
                 ],
                 true,
@@ -114,7 +115,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                         ['method' => 'isCaptchaEnabledFor', 'with' => 'paypal_payflowpro', 'willReturn' => false]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->never(),]
+                        ['method' => 'isValid', 'expects' => self::never(),]
                     ]
                 ],
                 false,
@@ -126,10 +127,10 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                         ['method' => 'isCaptchaEnabledFor', 'with' => 'paypal_payflowpro', 'willReturn' => true]
                     ],
                     'request' => [
-                        ['method' => 'getBodyParams', 'expects' => $this->once(), 'willReturn' => []]
+                        ['method' => 'getBodyParams', 'expects' => self::once(), 'willReturn' => []]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->never(),]
+                        ['method' => 'isValid', 'expects' => self::never(),]
                     ]
                 ],
                 false,
@@ -143,12 +144,12 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturn' => ['cartId' => 1, 'paymentMethod' => ['method' => 'checkmo']]
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->never(), 'willReturn' => false]
+                        ['method' => 'isValid', 'expects' => self::never(), 'willReturn' => false]
                     ]
                 ],
                 false,
@@ -162,12 +163,12 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturn' => ['cartId' => 1, 'paymentMethod' => ['method' => Config::METHOD_PAYFLOWPRO]]
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->once(), 'with' => 1, 'willReturn' => false]
+                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 1, 'willReturn' => false]
                     ]
                 ],
                 false,
@@ -181,12 +182,12 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturn' => ['cartId' => 1, 'paymentMethod' => ['method' => Config::METHOD_PAYFLOWPRO]]
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->once(), 'with' => 1, 'willReturn' => true]
+                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 1, 'willReturn' => true]
                     ]
                 ],
                 false,
@@ -200,7 +201,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturn' => [
                                 'cart_id' => 1,
                                 'payment_method' => ['method' => Config::METHOD_PAYFLOWPRO]
@@ -208,7 +209,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->once(), 'with' => 1, 'willReturn' => true]
+                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 1, 'willReturn' => true]
                     ]
                 ],
                 false,
@@ -222,7 +223,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturn' => [
                                 'cartId' => '17uc43rge98nc92',
                                 'paymentMethod' => ['method' => Config::METHOD_PAYFLOWPRO]
@@ -232,24 +233,24 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'quoteIdMaskFactory' => [
                         [
                             'method' => 'create',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturnProperty' => 'quoteIdMask'
                         ]
                     ],
                     'quoteIdMask' => [
                         [
                             'method' => 'load',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturnSelf' => null
                         ],
                         [
                             'method' => 'getQuoteId',
-                            'expects' => $this->once(),
+                            'expects' => self::once(),
                             'willReturn' => 2
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => $this->once(), 'with' => 2, 'willReturn' => true]
+                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 2, 'willReturn' => true]
                     ]
                 ],
                 false,

@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -142,7 +143,7 @@ class TfaTest extends TestCase
      *
      * @return array
      */
-    public function getForcedProvidersDataSet(): array
+    public static function getForcedProvidersDataSet(): array
     {
         return [
             'not defined' => [

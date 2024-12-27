@@ -1,6 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright 2024 Adobe
+ * All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -55,7 +56,7 @@ class DuoSecurityTest extends TestCase
      *
      * @return array
      */
-    public function getIsEnabledTestDataSet(): array
+    public static function getIsEnabledTestDataSet(): array
     {
         return [
             [

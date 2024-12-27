@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -56,6 +56,8 @@ class LoginObserver implements ObserverInterface
 
     /**
      * @var string
+     * @deprecated
+     * @see no actuall usage in the class
      */
     private $loginActionName;
 
@@ -117,9 +119,7 @@ class LoginObserver implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $key = 'user_login';
-        if ($this->isCaptchaEnabled->isCaptchaEnabledFor($key)
-            && $this->request->getFullActionName() === $this->loginActionName
-        ) {
+        if ($this->isCaptchaEnabled->isCaptchaEnabledFor($key)) {
             $validationConfig = $this->validationConfigResolver->get($key);
             try {
                 $reCaptchaResponse = $this->captchaResponseResolver->resolve($this->request);

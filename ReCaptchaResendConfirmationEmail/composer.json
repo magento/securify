@@ -2,7 +2,7 @@
     "name": "magento/module-re-captcha-resend-confirmation-email",
     "description": "Google reCAPTCHA integration for Magento2",
     "require": {
-        "php": "~8.1.0||~8.2.0||~8.3.0",
+        "php": "~8.2.0||~8.3.0",
         "magento/framework": "*",
         "magento/module-re-captcha-ui": "*",
         "magento/module-re-captcha-validation-api": "*",
