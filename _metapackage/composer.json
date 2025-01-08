@@ -2,12 +2,6 @@
     "name": "magento/security-package",
     "description": "Magento Security Package",
     "type": "metapackage",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:magento-commerce/magento-recaptcha.git"
-        }
-    ],
     "require": {
         "magento/module-re-captcha-admin-ui": "*",
         "magento/module-re-captcha-checkout": "*",
@@ -34,7 +28,7 @@
         "magento/module-re-captcha-webapi-ui": "*",
         "magento/module-securitytxt": "*",
         "magento/module-two-factor-auth": "*",
-        "magento/recaptcha": "dev-develop",
+        "magento/recaptcha": "^1.0.0",
         "magento/module-re-captcha-checkout-sales-rule": "*"
     }
 }
