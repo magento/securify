@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+  * Copyright 2020 Adobe
+  * All Rights Reserved.
+  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
@@ -63,20 +63,29 @@
             </group>
             <group id="duo" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0"
                    showInStore="0">
-                <label>Duo Security</label>
-                <field id="integration_key" translate="label comment" type="text" sortOrder="20" showInDefault="1"
+                <label>Duo Security Universal Prompt</label>
+                <field id="client_id" translate="label comment" type="text" sortOrder="20" showInDefault="1"
                        showInWebsite="0" showInStore="0">
-                    <label>Integration key</label>
+                    <label>Client Id</label>
                 </field>
-                <field id="secret_key" translate="label comment" type="obscure" sortOrder="30" showInDefault="1"
+                <field id="client_secret" translate="label comment" type="obscure" sortOrder="30" showInDefault="1"
                        showInWebsite="0" showInStore="0">
-                    <label>Secret key</label>
+                    <label>Client Secret</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
                 <field id="api_hostname" translate="label comment" type="text" sortOrder="40" showInDefault="1"
                        showInWebsite="0" showInStore="0">
                     <label>API hostname</label>
                     <backend_model>Magento\TwoFactorAuth\Model\Config\Backend\Duo\ApiHostname</backend_model>
+                </field>
+                <field id="integration_key" translate="label comment" type="text" sortOrder="60" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Integration Key</label>
+                </field>
+                <field id="secret_key" translate="label comment" type="obscure" sortOrder="70" showInDefault="1"
+                       showInWebsite="0" showInStore="0">
+                    <label>Secret Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
             </group>
 

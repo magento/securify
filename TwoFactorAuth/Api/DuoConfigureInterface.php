@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -20,6 +20,9 @@ interface DuoConfigureInterface
     /**
      * Get the information required to configure duo
      *
+     * @deprecated this method is deprecated and will be removed in a future release.
+     * @see getDuoConfigurationData
+     *
      * @param string $tfaToken
      * @return \Magento\TwoFactorAuth\Api\Data\DuoDataInterface
      */
@@ -30,9 +33,29 @@ interface DuoConfigureInterface
     /**
      * Activate the provider and get an admin token
      *
+     * @deprecated this method is deprecated and will be removed in a future release.
+     * @see duoActivate
      * @param string $tfaToken
      * @param string $signatureResponse
      * @return void
      */
     public function activate(string $tfaToken, string $signatureResponse): void;
+
+    /**
+     * Configure duo for first time user
+     *
+     * @param string $tfaToken
+     * @return void
+     */
+    public function getDuoConfigurationData(
+        string $tfaToken
+    );
+
+    /**
+     * Activate the provider and get an admin token
+     *
+     * @param string $tfaToken
+     * @return void
+     */
+    public function duoActivate(string $tfaToken): void;
 }

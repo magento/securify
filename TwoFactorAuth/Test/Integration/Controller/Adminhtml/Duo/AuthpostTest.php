@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -20,14 +20,14 @@ use Magento\TwoFactorAuth\TestFramework\TestCase\AbstractConfigureBackendControl
 class AuthpostTest extends AbstractConfigureBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/duo/authpost';
 
     /**
-     * @inheritDoc
+     * @var string
      */
-    protected $httpMethod = Request::METHOD_POST;
+    protected $httpMethod = Request::METHOD_GET;
 
     /**
      * @inheritDoc
@@ -41,10 +41,11 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/application_key duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testTokenAccess(): void
     {
@@ -56,10 +57,11 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/application_key duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testAclHasAccess()
     {
@@ -72,10 +74,11 @@ class AuthpostTest extends AbstractConfigureBackendController
     /**
      * @inheritDoc
      * @magentoConfigFixture default/twofactorauth/general/force_providers duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/integration_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/secret_key duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname duo_security
-     * @magentoConfigFixture default/twofactorauth/duo/application_key duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      */
     public function testAclNoAccess()
     {
