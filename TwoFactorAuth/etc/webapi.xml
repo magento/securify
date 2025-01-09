@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+  * Copyright 2020 Adobe
+  * All Rights Reserved.
+  */
  -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
@@ -163,28 +163,21 @@
     </route>
 
     <route url="/V1/tfa/provider/duo_security/configure" method="POST">
-        <service class="Magento\TwoFactorAuth\Api\DuoConfigureInterface" method="getConfigurationData"/>
+        <service class="Magento\TwoFactorAuth\Api\DuoConfigureInterface" method="getDuoConfigurationData"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
 
     <route url="/V1/tfa/provider/duo_security/activate" method="POST">
-        <service class="Magento\TwoFactorAuth\Api\DuoConfigureInterface" method="activate"/>
-        <resources>
-            <resource ref="anonymous" />
-        </resources>
-    </route>
-
-    <route url="/V1/tfa/provider/duo_security/get-authentication-data" method="POST">
-        <service class="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" method="getAuthenticateData"/>
+        <service class="Magento\TwoFactorAuth\Api\DuoConfigureInterface" method="duoActivate"/>
         <resources>
             <resource ref="anonymous" />
         </resources>
     </route>
 
     <route url="/V1/tfa/provider/duo_security/authenticate" method="POST">
-        <service class="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" method="createAdminAccessTokenWithCredentials"/>
+        <service class="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" method="createAdminAccessTokenWithCredentialsAndPasscode"/>
         <resources>
             <resource ref="anonymous" />
         </resources>

@@ -1,16 +1,21 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Model\Provider\Engine;
 
+use Duo\DuoUniversal\DuoException;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
+use Magento\Framework\UrlInterface;
 use Magento\User\Api\Data\UserInterface;
 use Magento\TwoFactorAuth\Api\EngineInterface;
+use Duo\DuoUniversal\Client;
+use DuoAPI\Auth as DuoAuth;
 
 /**
  * Duo Security engine
@@ -23,44 +28,19 @@ class DuoSecurity implements EngineInterface
     public const CODE = 'duo_security'; // Must be the same as defined in di.xml
 
     /**
-     * Duo request prefix
-     */
-    public const DUO_PREFIX = 'TX';
-
-    /**
-     * Duo app prefix
-     */
-    public const APP_PREFIX = 'APP';
-
-    /**
-     * Duo auth prefix
-     */
-    public const AUTH_PREFIX = 'AUTH';
-
-    /**
-     * Duo expire time
-     */
-    public const DUO_EXPIRE = 300;
-
-    /**
-     * Application expire time
-     */
-    public const APP_EXPIRE = 3600;
-
-    /**
      * Configuration XML path for enabled flag
      */
     public const XML_PATH_ENABLED = 'twofactorauth/duo/enabled';
 
     /**
-     * Configuration XML path for integration key
+     * Configuration XML path for Client Id
      */
-    public const XML_PATH_INTEGRATION_KEY = 'twofactorauth/duo/integration_key';
+    public const XML_PATH_CLIENT_ID = 'twofactorauth/duo/client_id';
 
     /**
-     * Configuration XML path for secret key
+     * Configuration XML path for Client secret
      */
-    public const XML_PATH_SECRET_KEY = 'twofactorauth/duo/secret_key';
+    public const XML_PATH_CLIENT_SECRET = 'twofactorauth/duo/client_secret';
 
     /**
      * Configuration XML path for host name
@@ -68,9 +48,14 @@ class DuoSecurity implements EngineInterface
     public const XML_PATH_API_HOSTNAME = 'twofactorauth/duo/api_hostname';
 
     /**
-     * Configuration XML path for application key
+     * Configuration XML path for integration key
      */
-    public const XML_PATH_APPLICATION_KEY = 'twofactorauth/duo/application_key';
+    public const XML_PATH_IKEY = 'twofactorauth/duo/integration_key';
+
+    /**
+     *  Configuration XML path for secret key
+     */
+    public const XML_PATH_SKEY = 'twofactorauth/duo/secret_key';
 
     /**
      * @var ScopeConfigInterface
@@ -78,20 +63,48 @@ class DuoSecurity implements EngineInterface
     private $scopeConfig;
 
     /**
-     * @var string
+     * @var Client
      */
-    private $duoSignaturePrefix;
+    private $client;
+
+    /**
+     * @var DuoAuth
+     */
+    private $duoAuth;
+
+    /**
+     * @var UrlInterface
+     */
+    private $urlBuilder;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
-     * @param string $duoSignaturePrefix
+     * @param UrlInterface $urlBuilder
+     * @param Client|null $client
+     * @param DuoAuth|null $duoAuth
+     * @throws \Duo\DuoUniversal\DuoException
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        string $duoSignaturePrefix = self::AUTH_PREFIX
+        UrlInterface $urlBuilder,
+        Client $client = null,
+        DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->duoSignaturePrefix = $duoSignaturePrefix;
+        $this->urlBuilder = $urlBuilder;
+        if ($this->isDuoForcedProvider()) {
+            $this->client = $client ?? new Client(
+                $this->getClientId(),
+                $this->getClientSecret(),
+                $this->getApiHostname(),
+                $this->getCallbackUrl()
+            );
+            $this->duoAuth = $duoAuth ?? new DuoAuth(
+                $this->getIkey(),
+                $this->getSkey(),
+                $this->getApiHostname()
+            );
+        }
     }
 
     /**
@@ -105,149 +118,86 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
-     * Get application key
+     * Get Client Secret
      *
      * @return string
      */
-    private function getApplicationKey(): string
+    private function getClientSecret(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_APPLICATION_KEY);
+        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_SECRET);
     }
 
     /**
-     * Get secret key
+     * Get Client Id
      *
      * @return string
      */
-    private function getSecretKey(): string
+    private function getClientId(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_SECRET_KEY);
+        return $this->scopeConfig->getValue(static::XML_PATH_CLIENT_ID);
     }
 
     /**
-     * Get integration key
+     * Get callback URL
      *
      * @return string
      */
-    private function getIntegrationKey(): string
+    private function getCallbackUrl(): string
     {
-        return $this->scopeConfig->getValue(static::XML_PATH_INTEGRATION_KEY);
+        return $this->urlBuilder->getUrl('tfa/duo/authpost');
     }
 
     /**
-     * Sign values
+     * Get Integration Key
      *
-     * @param string $key
-     * @param string $values
-     * @param string $prefix
-     * @param int $expire
-     * @param int $time
      * @return string
      */
-    private function signValues(string $key, string $values, string $prefix, int $expire, int $time): string
+    private function getIkey(): string
     {
-        $exp = $time + $expire;
-        $cookie = $prefix . '|' . base64_encode($values . '|' . $exp);
-
-        $sig = hash_hmac('sha1', $cookie, $key);
-        return $cookie . '|' . $sig;
+        return $this->scopeConfig->getValue(static::XML_PATH_IKEY);
     }
 
     /**
-     * Parse signed values and return username
+     * Get Secret Key
      *
-     * @param string $key
-     * @param string $val
-     * @param string $prefix
-     * @param int $time
-     * @return string|null
+     * @return string
      */
-    private function parseValues(string $key, string $val, string $prefix, int $time): ?string
+    private function getSkey(): string
     {
-        $integrationKey = $this->getIntegrationKey();
-
-        $timestamp = ($time ? $time : time());
-
-        $parts = explode('|', $val);
-        if (count($parts) !== 3) {
-            return null;
-        }
-        [$uPrefix, $uB64, $uSig] = $parts;
-
-        $sig = hash_hmac('sha1', $uPrefix . '|' . $uB64, $key);
-        if (hash_hmac('sha1', $sig, $key) !== hash_hmac('sha1', $uSig, $key)) {
-            return null;
-        }
-
-        if ($uPrefix !== $prefix) {
-            return null;
-        }
-
-        // @codingStandardsIgnoreStart
-        $cookieParts = explode('|', base64_decode($uB64));
-        // @codingStandardsIgnoreEnd
-
-        if (count($cookieParts) !== 3) {
-            return null;
-        }
-        [$user, $uIkey, $exp] = $cookieParts;
-
-        if ($uIkey !== $integrationKey) {
-            return null;
-        }
-        if ($timestamp >= (int) $exp) {
-            return null;
-        }
-
-        return $user;
+        return $this->scopeConfig->getValue(static::XML_PATH_SKEY);
     }
 
     /**
-     * Get request signature
+     * Verify the user
      *
      * @param UserInterface $user
-     * @return string
-     */
-    public function getRequestSignature(UserInterface $user): string
-    {
-        $time = time();
-
-        $values = $user->getUserName() . '|' . $this->getIntegrationKey();
-        $duoSignature = $this->signValues(
-            $this->getSecretKey(),
-            $values,
-            $this->duoSignaturePrefix,
-            static::DUO_EXPIRE,
-            $time
-        );
-        $appSignature = $this->signValues(
-            $this->getApplicationKey(),
-            $values,
-            static::APP_PREFIX,
-            static::APP_EXPIRE,
-            $time
-        );
-
-        return $duoSignature . ':' . $appSignature;
-    }
-
-    /**
-     * @inheritDoc
+     * @param DataObject $request
+     * @return bool
+     * @throws \Duo\DuoUniversal\DuoException
      */
     public function verify(UserInterface $user, DataObject $request): bool
     {
-        $time = time();
+        $duoCode = $request->getData('duo_code');
+        $username = $user->getUserName();
 
-        $signatures = explode(':', (string)$request->getData('sig_response'));
-        if (count($signatures) !== 2) {
+        try {
+            // Not saving token as this is for verification purpose
+            $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
+        } catch (DuoException $e) {
             return false;
         }
-        [$authSig, $appSig] = $signatures;
+        # Exchange happened successfully so render success page
+        return true;
+    }
 
-        $authUser = $this->parseValues($this->getSecretKey(), $authSig, static::AUTH_PREFIX, $time);
-        $appUser = $this->parseValues($this->getApplicationKey(), $appSig, static::APP_PREFIX, $time);
-
-        return (($authUser === $appUser) && ($appUser === $user->getUserName()));
+    /**
+     * Check if Duo is selected as forced provider
+     */
+    private function isDuoForcedProvider(): bool
+    {
+        $providers = $this->scopeConfig->getValue('twofactorauth/general/force_providers') ?? '';
+        $forcedProviders = array_map('trim', explode(',', $providers));
+        return in_array(self::CODE, $forcedProviders, true);
     }
 
     /**
@@ -256,12 +206,107 @@ class DuoSecurity implements EngineInterface
     public function isEnabled(): bool
     {
         try {
-            return !!$this->getApiHostname() &&
-                !!$this->getIntegrationKey() &&
-                !!$this->getSecretKey();
+            return $this->isDuoForcedProvider() &&
+                !!$this->getApiHostname() &&
+                !!$this->getClientId() &&
+                !!$this->getClientSecret();
         } catch (\TypeError $exception) {
             //At least one of the methods returned null instead of a string
             return false;
         }
+    }
+
+    /**
+     * Initiate authentication with Duo Universal Prompt
+     *
+     * @param string $username
+     * @param string $state
+     * @return array
+     * @throws \Duo\DuoUniversal\DuoException
+     */
+    public function initiateAuth($username, string $state): array
+    {
+        try {
+            $this->healthCheck();
+        } catch (DuoException $e) {
+                return [
+                    'status' => 'failure',
+                    'redirect_url' => '',
+                    'message' => __("2FA Unavailable. Confirm Duo client/secret/host values are correct")
+                ];
+        }
+
+        return [
+            'status' => 'success',
+            'redirect_url' => $this->client->createAuthUrl($username, $state),
+            'message' => __('Duo Auth URL created successfully.')
+        ];
+    }
+
+    /**
+     * Health check for Duo Universal prompt.
+     *
+     * @return void
+     * @throws \Duo\DuoUniversal\DuoException
+     */
+    public function healthCheck(): void
+    {
+        $this->client->healthCheck();
+    }
+
+    /**
+     * Generate a state for Duo Universal prompt
+     *
+     * @return string
+     */
+    public function generateDuoState() : string
+    {
+        return $this->client->generateState();
+    }
+
+    /**
+     * Enroll a new user for Duo Auth API.
+     *
+     * @param string|null $username
+     * @param int|null $validSecs
+     * @return mixed
+     */
+    public function enrollNewUser($username = null, $validSecs = null)
+    {
+        return $this->duoAuth->enroll($username, $validSecs);
+    }
+
+    /**
+     * Check authentication for Duo Auth API.
+     *
+     * @param string $userIdentifier
+     * @param string|null $ipAddr
+     * @param string|null $trustedDeviceToken
+     * @param bool $username
+     * @return string
+     */
+    public function assertUserIsValid($userIdentifier, $ipAddr = null, $trustedDeviceToken = null, $username = true)
+    {
+        $response =  $this->duoAuth->preauth($userIdentifier, $ipAddr, $trustedDeviceToken, $username);
+        return $response['response']['response']['result'];
+    }
+
+    /**
+     * Authorize a user with Duo Auth API.
+     *
+     * @param string $userIdentifier
+     * @param string $factor
+     * @param array $factorParams
+     * @param string|null $ipAddr
+     * @param bool $async
+     * @return array
+     */
+    public function authorizeUser($userIdentifier, $factor, $factorParams, $ipAddr = null, $async = false)
+    {
+        $response = $this->duoAuth->auth($userIdentifier, $factor, $factorParams, $ipAddr, $async);
+        return [
+            'status' => $response['response']['response']['status'],
+            'msg' => $response['response']['response']['status_msg']
+        ];
     }
 }

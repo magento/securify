@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -9,7 +9,7 @@ namespace Magento\TwoFactorAuth\Controller\Adminhtml\Duo;
 
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
-use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\DataObjectFactory;
 use Magento\TwoFactorAuth\Model\AlertInterface;
 use Magento\TwoFactorAuth\Api\TfaInterface;
@@ -24,7 +24,7 @@ use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
  *
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
-class Authpost extends AbstractAction implements HttpPostActionInterface
+class Authpost extends AbstractAction implements HttpGetActionInterface
 {
     /**
      * @var TfaInterface
@@ -122,13 +122,17 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
     public function execute()
     {
         $user = $this->getUser();
+        $username = $user->getUserName();
+        $savedState = $this->session->getDuoState();
 
-        if ($this->duoSecurity->verify($user, $this->dataObjectFactory->create([
-            'data' => $this->getRequest()->getParams(),
-        ]))) {
-            $this->tfa->getProvider(DuoSecurity::CODE)->activate((int) $user->getId());
-            $this->tfaSession->grantAccess();
-            return $this->_redirect($this->context->getBackendUrl()->getStartupPageUrl());
+        if (!empty($savedState) && !empty($username) && ($this->getRequest()->getParam('state') == $savedState)) {
+            if ($this->duoSecurity->verify($user, $this->dataObjectFactory->create([
+                'data' => $this->getRequest()->getParams(),
+            ]))) {
+                $this->tfa->getProvider(DuoSecurity::CODE)->activate((int) $user->getId());
+                $this->tfaSession->grantAccess();
+                return $this->_redirect($this->context->getBackendUrl()->getStartupPageUrl());
+            }
         } else {
             $this->alert->event(
                 'Magento_TwoFactorAuth',
@@ -139,6 +143,8 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
 
             return $this->_redirect('*/*/auth');
         }
+
+        return $this->_redirect('*/*/auth');
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -104,6 +104,11 @@ class ControllerActionPredispatchTest extends AbstractBackendController
      * Verify that users would be redirected to "2FA Config Request" page when 2FA is not configured for the app.
      *
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @return void
      */
     public function testConfigRequested(): void
@@ -134,6 +139,11 @@ class ControllerActionPredispatchTest extends AbstractBackendController
      * Verify that users returning with a token from the E-mail get a new cookie with it.
      *
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,duo_security
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
+     * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
+     * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @return void
      */
     public function testCookieSet(): void
