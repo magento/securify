@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+  * Copyright 2020 Adobe
+  * All Rights Reserved.
+  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
@@ -19,8 +19,8 @@
                 <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
             </authy>
             <duo>
+                <client_secret backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
-                <application_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
             </duo>
             <google>
                 <leeway backend_model="Magento\TwoFactorAuth\Model\Config\Backend\Leeway">29</leeway>

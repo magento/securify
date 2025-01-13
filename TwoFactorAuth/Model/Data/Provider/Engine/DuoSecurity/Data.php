@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -10,13 +10,24 @@ namespace Magento\TwoFactorAuth\Model\Data\Provider\Engine\DuoSecurity;
 
 use Magento\Framework\Model\AbstractExtensibleModel;
 use Magento\TwoFactorAuth\Api\Data\DuoDataExtensionInterface;
-use Magento\TwoFactorAuth\Api\Data\DuoDataInterface;
 
 /**
+ * This class was originally implementing Magento\TwoFactorAuth\Api\Data\DuoDataInterface.
+ * It no longer implements the interface but maintains backward compatibility.
  * Represents the data needed to authenticate with duo
  */
-class Data extends AbstractExtensibleModel implements DuoDataInterface
+class Data extends AbstractExtensibleModel
 {
+    /**
+     * Signature field name
+     */
+    public const SIGNATURE = 'signature';
+
+    /**
+     * Api host field name
+     */
+    public const API_HOSTNAME = 'api_hostname';
+
     /**
      * @inheritDoc
      */
