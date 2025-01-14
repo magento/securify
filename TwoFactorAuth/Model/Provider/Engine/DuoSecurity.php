@@ -87,8 +87,8 @@ class DuoSecurity implements EngineInterface
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         UrlInterface $urlBuilder,
-        Client $client = null,
-        DuoAuth $duoAuth = null
+        ?Client $client = null,
+        ?DuoAuth $duoAuth = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->urlBuilder = $urlBuilder;

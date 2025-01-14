@@ -3,7 +3,7 @@
     "description": "Security.txt file for Magento 2 websites",
     "type": "magento2-module",
     "require": {
-        "php": "~8.2.0||~8.3.0",
+        "php": "~8.2.0||~8.3.0||~8.4.0",
         "magento/framework": "*",
         "magento/module-config": "*",
         "magento/module-store": "*"
