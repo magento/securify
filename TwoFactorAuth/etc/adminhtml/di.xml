@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -20,10 +20,5 @@
 
     <type name="Magento\Backend\Model\Auth">
         <plugin name="delete_tfat_cookie" type="Magento\TwoFactorAuth\Plugin\DeleteCookieOnLogout"/>
-    </type>
-    <type name="Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity">
-        <arguments>
-            <argument name="duoSignaturePrefix" xsi:type="const">Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity::DUO_PREFIX</argument>
-        </arguments>
     </type>
 </config>

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -44,8 +44,8 @@ class ForceProviders extends Value
         ScopeConfigInterface $config,
         TypeListInterface $cacheTypeList,
         TfaInterface $tfa,
-        AbstractResource $resource = null,
-        AbstractDb $resourceCollection = null,
+        ?AbstractResource $resource = null,
+        ?AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(
@@ -76,7 +76,7 @@ class ForceProviders extends Value
             $value = explode(',', $value);
         }
         $validValues = is_array($value) ? array_intersect($codes, $value) : [];
-        if (empty($value) || !$validValues) {
+        if (count($value) === 0 || count($validValues) === 0) {
             throw new ValidatorException(__('You have to select at least one Two-Factor Authorization provider'));
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -20,6 +20,8 @@ interface DuoAuthenticateInterface
     /**
      * Get the information required to configure duo
      *
+     * @deprecated this method is deprecated and will be removed in a future release.
+     * @see none
      * @param string $username
      * @param string $password
      * @return \Magento\TwoFactorAuth\Api\Data\DuoDataInterface
@@ -32,6 +34,9 @@ interface DuoAuthenticateInterface
     /**
      * Authenticate and get an admin token
      *
+     * @deprecated this method is deprecated and will be removed in a future release.
+     * @see createAdminAccessTokenWithCredentialsAndPasscode
+     *
      * @param string $username
      * @param string $password
      * @param string $signatureResponse
@@ -41,5 +46,19 @@ interface DuoAuthenticateInterface
         string $username,
         string $password,
         string $signatureResponse
+    ): string;
+
+    /**
+     * Authenticate and get an admin token with passcode
+     *
+     * @param string $username
+     * @param string $password
+     * @param string $passcode
+     * @return string
+     */
+    public function createAdminAccessTokenWithCredentialsAndPasscode(
+        string $username,
+        string $password,
+        string $passcode
     ): string;
 }

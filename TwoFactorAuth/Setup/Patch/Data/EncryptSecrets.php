@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Setup\Patch\Data;
@@ -55,8 +56,7 @@ class EncryptSecrets implements DataPatchInterface
             ->where(
                 'path in (?)',
                 [
-                    DuoSecurity::XML_PATH_APPLICATION_KEY,
-                    DuoSecurity::XML_PATH_SECRET_KEY,
+                    DuoSecurity::XML_PATH_CLIENT_SECRET,
                     Service::XML_PATH_API_KEY,
                 ]
             );

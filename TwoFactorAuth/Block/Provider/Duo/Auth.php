@@ -1,14 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Block\Provider\Duo;
 
 use Magento\Backend\Block\Template;
 use Magento\Backend\Model\Auth\Session;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
 
 /**
@@ -48,15 +50,14 @@ class Auth extends Template
      */
     public function getJsLayout()
     {
-        $this->jsLayout['components']['tfa-auth']['postUrl'] =
-            $this->getUrl('*/*/authpost', ['form_key' => $this->getFormKey()]);
-
-        $this->jsLayout['components']['tfa-auth']['signature'] =
-            $this->duoSecurity->getRequestSignature($this->session->getUser());
-
-        $this->jsLayout['components']['tfa-auth']['apiHost'] =
-            $this->duoSecurity->getApiHostname();
-
+        $user = $this->session->getUser();
+        if (!$user) {
+            throw new LocalizedException(__('User session not found.'));
+        }
+        $authUrl = $this->getData('auth_url');
+        if ($authUrl) {
+            $this->jsLayout['components']['tfa-auth']['authUrl'] = $authUrl;
+        }
         return parent::getJsLayout();
     }
 }

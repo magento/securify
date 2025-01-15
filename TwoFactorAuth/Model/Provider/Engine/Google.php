@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -10,8 +10,10 @@ namespace Magento\TwoFactorAuth\Model\Provider\Engine;
 use Base32\Base32;
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -214,13 +216,17 @@ class Google implements EngineInterface
     public function getQrCodeAsPng(UserInterface $user): string
     {
         // @codingStandardsIgnoreStart
-        $qrCode = new QrCode($this->getProvisioningUrl($user));
-        $qrCode->setSize(400);
-        $qrCode->setMargin(0);
-        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevelHigh());
-        $qrCode->setForegroundColor(new Color(0, 0, 0, 0));
-        $qrCode->setBackgroundColor(new Color(255, 255, 255, 0));
-        $qrCode->setEncoding(new Encoding('UTF-8'));
+        $qrCode = new QrCode(
+            $this->getProvisioningUrl($user),
+            new Encoding('UTF-8'),
+            ErrorCorrectionLevel::High,
+            400,
+            0,
+            RoundBlockSizeMode::Margin,
+            new Color(0, 0, 0, 0),
+            new Color(255, 255, 255, 0)
+        );
+
 
         $writer = new PngWriter();
         $pngData = $writer->write($qrCode);

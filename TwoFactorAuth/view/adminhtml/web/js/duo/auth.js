@@ -1,13 +1,12 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 define([
     'ko',
-    'uiComponent',
-    'Magento_TwoFactorAuth/js/duo/api'
-], function (ko, Component, duo) {
+    'uiComponent'
+], function (ko, Component) {
     'use strict';
 
     return Component.extend({
@@ -17,42 +16,25 @@ define([
             template: 'Magento_TwoFactorAuth/duo/auth'
         },
 
-        signature: '',
-        apiHost: '',
-        postUrl: '',
-        authenticateData: {},
+        authUrl: '',
+
+        getAuthUrl: function () {
+            return this.authUrl;
+        },
+
+        redirectToAuthUrl: function () {
+            var redirectUrl = this.getAuthUrl();
+
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            }
+        },
 
         /**
-         * Start waiting loop
+         * After the element is rendered, bind the authUrl (optional)
          */
         onAfterRender: function () {
-            window.setTimeout(function () {
-                duo.init();
-            }, 100);
-        },
-
-        /**
-         * Get POST URL
-         * @returns {String}
-         */
-        getPostUrl: function () {
-            return this.postUrl;
-        },
-
-        /**
-         * Get signature
-         * @returns {String}
-         */
-        getSignature: function () {
-            return this.signature;
-        },
-
-        /**
-         * Get API host
-         * @returns {String}
-         */
-        getApiHost: function () {
-            return this.apiHost;
+            // Not Required
         }
     });
 });
