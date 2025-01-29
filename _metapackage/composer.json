@@ -29,7 +29,7 @@
         "magento/module-re-captcha-wishlist": "*",
         "magento/module-securitytxt": "*",
         "magento/module-two-factor-auth": "*",
-        "magento/recaptcha": "^1.0.0",
+        "phpfui/recaptcha": "^2.0.0",
         "magento/module-re-captcha-checkout-sales-rule": "*"
     }
 }
