@@ -42,7 +42,7 @@ class Onepage implements LayoutProcessorInterface
     /**
      * @inheritDoc
      */
-    public function process($jsLayout)
+    public function process($jsLayout): array
     {
         $key = 'customer_login';
         if ($this->isCaptchaEnabled->isCaptchaEnabledFor($key)) {
@@ -72,6 +72,7 @@ class Onepage implements LayoutProcessorInterface
                 unset($jsLayout['components']['checkout']['children']['authentication']['children']['recaptcha']);
             }
         }
+
         $key = 'place_order';
         if ($this->isCaptchaEnabled->isCaptchaEnabledFor($key)) {
             $jsLayout['components']['checkout']['children']['steps']['children']['billing-step']['children']

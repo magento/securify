@@ -51,9 +51,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     private function getInvisibleBadgePosition(): string
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_POSITION
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_POSITION);
     }
 
     /**
@@ -63,9 +61,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     private function getTheme(): string
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_THEME
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_THEME);
     }
 
     /**
@@ -75,9 +71,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     private function getLanguageCode(): string
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_LANGUAGE_CODE
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_LANGUAGE_CODE);
     }
 
     /**
@@ -85,7 +79,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     public function get(): array
     {
-        $config = [
+        return [
             'rendering' => [
                 'sitekey' => $this->getPublicKey(),
                 'badge' => $this->getInvisibleBadgePosition(),
@@ -95,6 +89,5 @@ class UiConfigProvider implements UiConfigProviderInterface
             ],
             'invisible' => true,
         ];
-        return $config;
     }
 }

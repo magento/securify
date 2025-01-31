@@ -78,9 +78,7 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
      */
     private function getValidationFailureMessage(): string
     {
-        return trim(
-            (string)$this->scopeConfig->getValue(self::XML_PATH_VALIDATION_FAILURE)
-        );
+        return trim((string)$this->scopeConfig->getValue(self::XML_PATH_VALIDATION_FAILURE));
     }
 
     /**
@@ -92,9 +90,7 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
      */
     private function getScoreThreshold(): float
     {
-        return min(1.0, max(0.1, (float)$this->scopeConfig->getValue(
-            self::XML_PATH_SCORE_THRESHOLD
-        )));
+        return min(1.0, max(0.1, (float)$this->scopeConfig->getValue(self::XML_PATH_SCORE_THRESHOLD)));
     }
 
     /**
@@ -104,8 +100,8 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
     {
         $extensionAttributes = $this->validationConfigExtensionFactory->create();
         $extensionAttributes->setData('scoreThreshold', $this->getScoreThreshold());
-        /** @var ValidationConfigInterface $validationConfig */
-        $validationConfig = $this->validationConfigFactory->create(
+
+        return $this->validationConfigFactory->create(
             [
                 'privateKey' => $this->getPrivateKey(),
                 'remoteIp' => $this->remoteAddress->getRemoteAddress(),
@@ -113,6 +109,5 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
                 'extensionAttributes' => $extensionAttributes,
             ]
         );
-        return $validationConfig;
     }
 }

@@ -3,7 +3,8 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-/** @var $block Magento\ReCaptchaUi\Block\ReCaptcha */
+/** @var $block \Magento\ReCaptchaUi\Block\ReCaptcha */
+/** @var $escaper \Magento\Framework\Escaper */
 $config = $block->getCaptchaUiConfig();
 $renderingOptions = $config['rendering'] ?? [];
 $isInvisible = !empty($config['invisible']);
@@ -23,8 +24,7 @@ $isInvisible = !empty($config['invisible']);
         const scriptTag = document.getElementsByTagName('script')[0];
 
         element.async = true;
-        element.src = 'https://www.google.com/recaptcha/api.js'
-            + '?onload=globalOnRecaptchaOnLoadCallback&render=explicit';
+        element.src = '<?= $escaper->escapeJs($config['api_url']) ?>?onload=globalOnRecaptchaOnLoadCallback&render=explicit';
 
         let isRecaptchaLoaded = false;
         let token = '';

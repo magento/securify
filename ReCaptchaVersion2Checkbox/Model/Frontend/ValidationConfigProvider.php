@@ -81,8 +81,7 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
      */
     public function get(): ValidationConfigInterface
     {
-        /** @var ValidationConfigInterface $validationConfig */
-        $validationConfig = $this->validationConfigFactory->create(
+        return $this->validationConfigFactory->create(
             [
                 'privateKey' => $this->getPrivateKey(),
                 'remoteIp' => $this->remoteAddress->getRemoteAddress(),
@@ -90,6 +89,5 @@ class ValidationConfigProvider implements ValidationConfigProviderInterface
                 'extensionAttributes' => null,
             ]
         );
-        return $validationConfig;
     }
 }

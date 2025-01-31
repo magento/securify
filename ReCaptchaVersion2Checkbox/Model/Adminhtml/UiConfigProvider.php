@@ -51,9 +51,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     private function getSize(): string
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_SIZE
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_SIZE);
     }
 
     /**
@@ -63,9 +61,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     private function getTheme(): string
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_THEME
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_THEME);
     }
 
     /**
@@ -75,9 +71,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     private function getLanguageCode(): string
     {
-        return (string)$this->scopeConfig->getValue(
-            self::XML_PATH_LANGUAGE_CODE
-        );
+        return (string)$this->scopeConfig->getValue(self::XML_PATH_LANGUAGE_CODE);
     }
 
     /**
@@ -85,7 +79,7 @@ class UiConfigProvider implements UiConfigProviderInterface
      */
     public function get(): array
     {
-        $config = [
+        return [
             'rendering' => [
                 'sitekey' => $this->getPublicKey(),
                 'size' => $this->getSize(),
@@ -94,6 +88,5 @@ class UiConfigProvider implements UiConfigProviderInterface
             ],
             'invisible' => false,
         ];
-        return $config;
     }
 }

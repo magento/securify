@@ -29,7 +29,7 @@ class OptionSource implements OptionSourceInterface
      */
     public function __construct(array $options = [])
     {
-        $this->options = $options;
+        $this->options = array_values($options);
     }
 
     /**
@@ -37,6 +37,6 @@ class OptionSource implements OptionSourceInterface
      */
     public function toOptionArray(): array
     {
-        return array_values($this->options);
+        return $this->options;
     }
 }

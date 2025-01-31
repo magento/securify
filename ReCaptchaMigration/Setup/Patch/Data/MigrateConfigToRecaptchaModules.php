@@ -60,7 +60,7 @@ class MigrateConfigToRecaptchaModules implements DataPatchInterface, PatchVersio
     /**
      * @inheritdoc
      */
-    public function apply()
+    public function apply(): self
     {
         $scopes = ['frontend', 'backend'];
         foreach ($scopes as $scope) {
@@ -69,6 +69,8 @@ class MigrateConfigToRecaptchaModules implements DataPatchInterface, PatchVersio
             $this->copyEnabledRecaptcha($scope);
             $this->disableLegacyRecaptcha($scope);
         }
+
+        return $this;
     }
 
     /**
@@ -250,7 +252,7 @@ class MigrateConfigToRecaptchaModules implements DataPatchInterface, PatchVersio
     /**
      * @inheritdoc
      */
-    public static function getDependencies()
+    public static function getDependencies(): array
     {
         return [];
     }
@@ -258,7 +260,7 @@ class MigrateConfigToRecaptchaModules implements DataPatchInterface, PatchVersio
     /**
      * @inheritdoc
      */
-    public static function getVersion()
+    public static function getVersion(): string
     {
         return '3.0.0';
     }
@@ -266,7 +268,7 @@ class MigrateConfigToRecaptchaModules implements DataPatchInterface, PatchVersio
     /**
      * @inheritdoc
      */
-    public function getAliases()
+    public function getAliases(): array
     {
         return [];
     }

@@ -65,7 +65,6 @@ class IsCaptchaEnabled implements IsCaptchaEnabledInterface
         $validationConfig = $this->validationConfigResolver->get($key);
 
         // TODO:
-        return $validationConfig->getPrivateKey()
-            && !empty($uiConfig['rendering']['sitekey']);
+        return $validationConfig->getPrivateKey() && !empty($uiConfig['rendering']['sitekey']);
     }
 }

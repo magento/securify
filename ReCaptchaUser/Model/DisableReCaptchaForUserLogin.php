@@ -42,13 +42,9 @@ class DisableReCaptchaForUserLogin
     /**
      * Disable reCAPTCHA for user login (causes config cache flush)
      */
-    public function execute()
+    public function execute(): void
     {
-        $this->config->saveConfig(
-            self::XML_PATH_ENABLED,
-            null
-        );
-
+        $this->config->saveConfig(self::XML_PATH_ENABLED, null);
         $this->cacheManager->flush(['config']);
     }
 }

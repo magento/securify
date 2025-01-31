@@ -37,10 +37,6 @@ class CaptchaTypeResolver implements CaptchaTypeResolverInterface
      */
     public function getCaptchaTypeFor(string $key): ?string
     {
-        $type = $this->scopeConfig->getValue(
-            self::XML_PATH_TYPE_FOR . $key,
-            ScopeInterface::SCOPE_WEBSITE
-        );
-        return $type;
+        return $this->scopeConfig->getValue(self::XML_PATH_TYPE_FOR . $key, ScopeInterface::SCOPE_WEBSITE);
     }
 }
