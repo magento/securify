@@ -2,12 +2,14 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-.required-captcha.checkbox{
-    position: absolute;
-    display: block;
-    visibility: visible;
-    overflow: hidden;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
+& when (@media-common = true) {
+    .required-captcha.checkbox{
+        position: absolute;
+        display: block;
+        visibility: visible;
+        overflow: hidden;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
 }
