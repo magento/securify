@@ -1,17 +1,18 @@
 {
     "name": "magento/module-re-captcha-store-pickup",
     "description": "Google reCaptcha integration for Magento2 Inventory Store Pickup shipping form",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "1.0.1",
     "require": {
         "php": "~7.4.0||~8.1.0",
         "magento/framework": "*",
         "magento/module-checkout": "*",
-        "magento/module-re-captcha-ui": "*"
+        "magento/module-re-captcha-ui": "1.1.*"
     },
     "suggest": {
         "magento/module-inventory-in-store-pickup-frontend": "*"
     },
-    "type": "magento2-module",
-    "license": "OSL-3.0",
     "autoload": {
         "files": [
             "registration.php"
@@ -21,3 +22,4 @@
         }
     }
 }
+

@@ -69,8 +69,8 @@ class TfaReset extends Command
         $this->setName('security:tfa:reset');
         $this->setDescription('Reset configuration for one user');
 
-        $this->addArgument('user', InputArgument::REQUIRED, __('Username'));
-        $this->addArgument('provider', InputArgument::REQUIRED, __('Provider code'));
+        $this->addArgument('user', InputArgument::REQUIRED, __('Username')->render());
+        $this->addArgument('provider', InputArgument::REQUIRED, __('Provider code')->render());
 
         parent::configure();
     }

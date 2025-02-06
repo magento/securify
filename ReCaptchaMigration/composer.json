@@ -1,13 +1,14 @@
 {
     "name": "magento/module-re-captcha-migration",
     "description": "Google reCAPTCHA config migration for Magento2",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "1.1.2",
     "require": {
         "php": "~7.4.0||~8.1.0",
         "magento/framework": "*",
         "magento/module-config": "*"
     },
-    "type": "magento2-module",
-    "license": "OSL-3.0",
     "autoload": {
         "files": [
             "registration.php"
@@ -17,3 +18,4 @@
         }
     }
 }
+

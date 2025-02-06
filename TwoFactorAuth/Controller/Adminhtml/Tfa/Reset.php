@@ -10,11 +10,13 @@ namespace Magento\TwoFactorAuth\Controller\Adminhtml\Tfa;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\User\Model\UserFactory;
 use Magento\User\Model\ResourceModel\User as UserResourceModel;
 use Magento\TwoFactorAuth\Api\TfaInterface;
 use Magento\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
+use Magento\Backend\Model\View\Result\Redirect;
 
 /**
  * Reset 2FA configuration controller
@@ -39,21 +41,29 @@ class Reset extends AbstractAction implements HttpGetActionInterface, HttpPostAc
     private $tfa;
 
     /**
+     * @var Redirect
+     */
+    private $redirect;
+
+    /**
      * @param Context $context
      * @param UserResourceModel $userResourceModel
      * @param TfaInterface $tfa
      * @param UserFactory $userFactory
+     * @param Redirect $redirect
      */
     public function __construct(
         Context $context,
         UserResourceModel $userResourceModel,
         TfaInterface $tfa,
-        UserFactory $userFactory
+        UserFactory $userFactory,
+        Redirect $redirect = null
     ) {
         parent::__construct($context);
         $this->userResourceModel = $userResourceModel;
         $this->userInterfaceFactory = $userFactory;
         $this->tfa = $tfa;
+        $this->redirect = $redirect ?: ObjectManager::getInstance()->get(Redirect::class);
     }
 
     /**
@@ -81,7 +91,7 @@ class Reset extends AbstractAction implements HttpGetActionInterface, HttpPostAc
         $provider->resetConfiguration((int) $user->getId());
 
         $this->messageManager->addSuccessMessage(__('Configuration has been reset for this user'));
-        return $this->_redirect('adminhtml/user/edit', ['user_id' => $userId]);
+        return $this->resultRedirectFactory->create()->setPath('adminhtml/user/edit', ['user_id' => $userId]);
     }
 
     /**
@@ -89,6 +99,7 @@ class Reset extends AbstractAction implements HttpGetActionInterface, HttpPostAc
      */
     protected function _isAllowed()
     {
-        return parent::_isAllowed() && $this->_authorization->isAllowed('Magento_TwoFactorAuth::tfa');
+        return parent::_isAllowed() && $this->_authorization->isAllowed('Magento_TwoFactorAuth::tfa')
+            && $this->_authorization->isAllowed('Magento_User::acl_users');
     }
 }
