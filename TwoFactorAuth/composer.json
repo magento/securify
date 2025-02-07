@@ -1,6 +1,9 @@
 {
     "name": "magento/module-two-factor-auth",
     "description": "Two Factor Authentication module for Magento2",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "1.1.4-p11",
     "require": {
         "php": "~7.4.0||~8.1.0",
         "magento/framework": "*",
@@ -18,8 +21,6 @@
         "endroid/qr-code": "^4.3.5",
         "2tvenom/cborencode": "^1.0"
     },
-    "type": "magento2-module",
-    "license": "OSL-3.0",
     "autoload": {
         "files": [
             "registration.php"
@@ -29,3 +30,4 @@
         }
     }
 }
+

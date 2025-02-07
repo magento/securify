@@ -47,5 +47,6 @@ class DisableReCaptchaForUserLoginCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->disableReCaptchaForUserLogin->execute();
+        return Command::SUCCESS;
     }
 }
