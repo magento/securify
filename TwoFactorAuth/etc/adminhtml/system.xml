@@ -35,6 +35,16 @@
                     <label>Configuration Email URL for Web API</label>
                     <comment>This can be used to override the default email configuration link that is sent when using the Magento Web API's to authenticate. Use the placeholder :tfat to indicate where the token should be injected</comment>
                 </field>
+                <field canRestore="1" id="twofactorauth_retry" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Configuration for TwoFactorAuth retry attempts</label>
+                    <comment>Security configurations for TwoFactorAuth page.</comment>
+                </field>
+                <field canRestore="1" id="auth_lock_expire" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Configuration for TwoFactorAuth lock expire time</label>
+                    <comment>TwoFactorAuth Configuration.</comment>
+                </field>
             </group>
             <group id="google" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0"
                    showInStore="0">
@@ -42,7 +52,8 @@
                 <field id="otp_window" translate="label comment" type="text" sortOrder="10" showInDefault="1"
                        showInWebsite="0" showInStore="0" canRestore="1">
                     <label>OTP Window</label>
-                    <comment>This determines how long the one-time-passwords are valid for. An OTP Window of 1 will result in the current OTP value plus 1 code in the past and 1 code in the future to be valid at any given point in time.</comment>
+                    <comment>This sets the time drift leeway for OTPs. A leeway of 29 with a period of 30 means OTPs are valid within ±29 seconds from the current time. The leeway must be smaller than the period.</comment>
+                    <backend_model>Magento\TwoFactorAuth\Model\Config\Backend\OtpWindow</backend_model>
                 </field>
             </group>
             <group id="duo" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0"

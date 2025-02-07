@@ -11,6 +11,8 @@
         <twofactorauth>
             <general>
                 <force_providers></force_providers>
+                <twofactorauth_retry>10</twofactorauth_retry>
+                <auth_lock_expire>300</auth_lock_expire>
             </general>
             <authy>
                 <onetouch_message>Login request to your Magento Admin</onetouch_message>
@@ -21,7 +23,7 @@
                 <application_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
             </duo>
             <google>
-                <otp_window>1</otp_window>
+                <otp_window backend_model="Magento\TwoFactorAuth\Model\Config\Backend\OtpWindow">29</otp_window>
             </google>
         </twofactorauth>
     </default>

@@ -1,19 +1,14 @@
 {
     "name": "magento/module-re-captcha-ui",
     "description": "Google reCAPTCHA integration for Magento2",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "1.1.4",
     "require": {
         "php": "~8.1.0||~8.2.0||~8.3.0",
         "magento/framework": "*",
-        "magento/module-re-captcha-validation-api": "*"
+        "magento/module-re-captcha-validation-api": "1.1.*"
     },
-    "authors": [
-        {
-            "name": "Riccardo Tempesta",
-            "email": "riccardo.tempesta@magespecialist.it"
-        }
-    ],
-    "type": "magento2-module",
-    "license": "OSL-3.0",
     "autoload": {
         "files": [
             "registration.php"
@@ -21,5 +16,12 @@
         "psr-4": {
             "Magento\\ReCaptchaUi\\": ""
         }
-    }
+    },
+    "authors": [
+        {
+            "email": "riccardo.tempesta@magespecialist.it",
+            "name": "Riccardo Tempesta"
+        }
+    ]
 }
+

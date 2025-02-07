@@ -129,7 +129,7 @@ class GoogleActivateTest extends WebapiAbstract
     /**
      * @magentoConfigFixture twofactorauth/general/force_providers google
      * @magentoApiDataFixture Magento/User/_files/user_with_custom_role.php
-     * @magentoConfigFixture twofactorauth/google/otp_window 20
+     * @magentoConfigFixture twofactorauth/google/otp_window 29
      */
     public function testActivate()
     {

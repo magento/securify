@@ -2,22 +2,17 @@
     "name": "magento/module-securitytxt",
     "description": "Security.txt file for Magento 2 websites",
     "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "version": "1.1.3",
     "require": {
         "php": "~8.1.0||~8.2.0||~8.3.0",
         "magento/framework": "*",
         "magento/module-config": "*",
         "magento/module-store": "*"
     },
-    "authors": [
-        {
-            "name": "Kalpesh Mehta",
-            "email": "k@lpe.sh"
-        }
-    ],
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
     "autoload": {
         "files": [
             "registration.php"
@@ -25,5 +20,12 @@
         "psr-4": {
             "Magento\\Securitytxt\\": ""
         }
-    }
+    },
+    "authors": [
+        {
+            "email": "k@lpe.sh",
+            "name": "Kalpesh Mehta"
+        }
+    ]
 }
+

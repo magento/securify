@@ -19,9 +19,13 @@ use Magento\TwoFactorAuth\Api\TfaSessionInterface;
 use Magento\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use Magento\TwoFactorAuth\Model\Provider\Engine\Authy;
 use Magento\User\Model\User;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\User\Model\ResourceModel\User as UserResource;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Authpost extends AbstractAction implements HttpPostActionInterface
 {
@@ -61,6 +65,26 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
     private $alert;
 
     /**
+     * Config path for the 2FA Attempts
+     */
+    private const XML_PATH_2FA_RETRY_ATTEMPTS = 'twofactorauth/general/twofactorauth_retry';
+
+    /**
+     * Config path for the 2FA Attempts
+     */
+    private const XML_PATH_2FA_LOCK_EXPIRE = 'twofactorauth/general/auth_lock_expire';
+
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     * @var UserResource
+     */
+    private $userResource;
+
+    /**
      * @param Action\Context $context
      * @param Session $session
      * @param JsonFactory $jsonFactory
@@ -69,6 +93,9 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
      * @param TfaInterface $tfa
      * @param AlertInterface $alert
      * @param DataObjectFactory $dataObjectFactory
+     * @param UserResource|null $userResource
+     * @param ScopeConfigInterface|null $scopeConfig
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Action\Context $context,
@@ -78,7 +105,9 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
         TfaSessionInterface $tfaSession,
         TfaInterface $tfa,
         AlertInterface $alert,
-        DataObjectFactory $dataObjectFactory
+        DataObjectFactory $dataObjectFactory,
+        ?UserResource $userResource = null,
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         parent::__construct($context);
         $this->tfa = $tfa;
@@ -88,6 +117,8 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
         $this->authy = $authy;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->alert = $alert;
+        $this->scopeConfig = $scopeConfig ?? ObjectManager::getInstance()->get(ScopeConfigInterface::class);
+        $this->userResource = $userResource ?? ObjectManager::getInstance()->get(UserResource::class);
     }
 
     /**
@@ -109,6 +140,13 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
         $result = $this->jsonFactory->create();
 
         try {
+            if (!$this->allowApiRetries()) { //locked the user
+                $lockThreshold = $this->scopeConfig->getValue(self::XML_PATH_2FA_LOCK_EXPIRE);
+                if ($this->userResource->lock((int)$user->getId(), 0, $lockThreshold)) {
+                    $result->setData(['success' => false, 'message' => "Your account is temporarily disabled."]);
+                    return $result;
+                }
+            }
             $this->authy->verify($user, $this->dataObjectFactory->create([
                 'data' => $this->getRequest()->getParams(),
             ]));
@@ -140,5 +178,19 @@ class Authpost extends AbstractAction implements HttpPostActionInterface
             $user &&
             $this->tfa->getProviderIsAllowed((int) $user->getId(), Authy::CODE) &&
             $this->tfa->getProvider(Authy::CODE)->isActive((int) $user->getId());
+    }
+
+    /**
+     * Check if retry attempt above threshold value
+     *
+     * @return bool
+     */
+    private function allowApiRetries() : bool
+    {
+        $maxRetries = $this->scopeConfig->getValue(self::XML_PATH_2FA_RETRY_ATTEMPTS);
+        $verifyAttempts = $this->session->getOtpAttempt();
+        $verifyAttempts = $verifyAttempts === null ? 1 : $verifyAttempts+1;
+        $this->session->setOtpAttempt($verifyAttempts);
+        return  $maxRetries >= $verifyAttempts;
     }
 }
