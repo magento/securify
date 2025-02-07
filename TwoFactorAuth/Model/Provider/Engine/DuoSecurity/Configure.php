@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -94,5 +94,28 @@ class Configure implements DuoConfigureInterface
         $this->authenticate->assertResponseIsValid($user, $signatureResponse);
         $this->tfa->getProviderByCode(DuoSecurity::CODE)
             ->activate($userId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDuoConfigurationData(string $tfaToken)
+    {
+        $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
+        return $this->duo->enrollNewUser($user->getUserName(), 60);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function duoActivate(string $tfaToken): void
+    {
+        $user = $this->userAuthenticator->authenticateWithTokenAndProvider($tfaToken, DuoSecurity::CODE);
+        $userId = (int)$user->getId();
+
+        if ($this->duo->assertUserIsValid($user->getUserName()) == "auth") {
+            $this->tfa->getProviderByCode(DuoSecurity::CODE)
+                ->activate($userId);
+        }
     }
 }

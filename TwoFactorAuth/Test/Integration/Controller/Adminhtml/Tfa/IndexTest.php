@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ use Magento\TwoFactorAuth\Api\UserConfigManagerInterface;
 class IndexTest extends AbstractBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/tfa/index';
 
@@ -115,8 +115,10 @@ class IndexTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDbIsolation enabled
      */
@@ -134,8 +136,10 @@ class IndexTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDbIsolation enabled
      */
@@ -153,8 +157,10 @@ class IndexTest extends AbstractBackendController
     /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
+     * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST
+     * @magentoConfigFixture default/twofactorauth/duo/client_secret abcdefghijklmnopqrstuvwxyz0123456789abcd
      * @magentoConfigFixture default/twofactorauth/duo/integration_key abc123
-     * @magentoConfigFixture default/twofactorauth/duo/api_hostname abc123
+     * @magentoConfigFixture default/twofactorauth/duo/api_hostname test.duosecurity.com
      * @magentoConfigFixture default/twofactorauth/duo/secret_key abc123
      * @magentoDbIsolation enabled
      */

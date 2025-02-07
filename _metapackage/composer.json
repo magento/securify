@@ -28,7 +28,7 @@
         "magento/module-re-captcha-webapi-ui": "*",
         "magento/module-securitytxt": "*",
         "magento/module-two-factor-auth": "*",
-        "google/recaptcha": "^1.2",
+        "magento/recaptcha": "^1.0.0",
         "magento/module-re-captcha-checkout-sales-rule": "*"
     }
 }

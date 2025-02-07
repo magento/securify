@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
+  * Copyright 2020 Adobe
+  * All Rights Reserved.
+  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
@@ -38,7 +38,6 @@
     <preference for="Magento\TwoFactorAuth\Api\U2fKeyAuthenticateInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\U2fKey\Authenticate"/>
     <preference for="Magento\TwoFactorAuth\Api\DuoConfigureInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity\Configure"/>
     <preference for="Magento\TwoFactorAuth\Api\DuoAuthenticateInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity\Authenticate"/>
-    <preference for="Magento\TwoFactorAuth\Api\Data\DuoDataInterface" type="Magento\TwoFactorAuth\Model\Data\Provider\Engine\DuoSecurity\Data"/>
     <preference for="Magento\TwoFactorAuth\Api\U2fKeyConfigReaderInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\U2fKey\ConfigReader"/>
 
     <type name="Magento\Framework\Console\CommandListInterface">
@@ -57,12 +56,16 @@
             <argument name="sensitive" xsi:type="array">
                 <item name="twofactorauth/duo/integration_key" xsi:type="string">1</item>
                 <item name="twofactorauth/duo/secret_key" xsi:type="string">1</item>
+                <item name="twofactorauth/duo/client_id" xsi:type="string">1</item>
+                <item name="twofactorauth/duo/client_secret" xsi:type="string">1</item>
                 <item name="twofactorauth/duo/api_hostname" xsi:type="string">1</item>
                 <item name="twofactorauth/authy/api_key" xsi:type="string">1</item>
             </argument>
             <argument name="environment" xsi:type="array">
                 <item name="twofactorauth/duo/integration_key" xsi:type="string">1</item>
                 <item name="twofactorauth/duo/secret_key" xsi:type="string">1</item>
+                <item name="twofactorauth/duo/client_id" xsi:type="string">1</item>
+                <item name="twofactorauth/duo/client_secret" xsi:type="string">1</item>
                 <item name="twofactorauth/duo/api_hostname" xsi:type="string">1</item>
                 <item name="twofactorauth/authy/api_key" xsi:type="string">1</item>
             </argument>

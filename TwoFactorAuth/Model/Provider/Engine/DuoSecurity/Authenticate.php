@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -129,6 +129,8 @@ class Authenticate implements DuoAuthenticateInterface
     /**
      * Assert that the given signature is valid for the user
      *
+     * @deprecated This method is deprecated and will be removed in a future release.
+     * @see assertResponseIsValidForPasscode
      * @param UserInterface $user
      * @param string $signatureResponse
      * @throws LocalizedException
@@ -146,6 +148,48 @@ class Authenticate implements DuoAuthenticateInterface
             $this->alert->event(
                 'Magento_TwoFactorAuth',
                 'DuoSecurity invalid auth',
+                AlertInterface::LEVEL_WARNING,
+                $user->getUserName()
+            );
+
+            throw new LocalizedException(__('Invalid response'));
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createAdminAccessTokenWithCredentialsAndPasscode(
+        string $username,
+        string $password,
+        string $passcode
+    ): string {
+        $token = $this->adminTokenService->createAdminAccessToken($username, $password);
+
+        $user = $this->getUser($username);
+        $this->userAuthenticator->assertProviderIsValidForUser((int)$user->getId(), DuoSecurity::CODE);
+
+        $this->assertResponseIsValidForPasscode($user, $username, $passcode);
+
+        return $token;
+    }
+
+    /**
+     * Assert that the response from Duo is valid
+     *
+     * @param UserInterface $user
+     * @param string $username
+     * @param string $passcode
+     * @return void
+     * @throws LocalizedException
+     */
+    public function assertResponseIsValidForPasscode(UserInterface $user, $username, string $passcode): void
+    {
+        $duoAuthResponse = $this->duo->authorizeUser($username, "passcode", ['passcode' => $passcode]);
+        if ($duoAuthResponse['status'] !== 'allow') {
+            $this->alert->event(
+                'Magento_TwoFactorAuth',
+                'DuoSecurity invalid auth '. $duoAuthResponse['msg'],
                 AlertInterface::LEVEL_WARNING,
                 $user->getUserName()
             );
