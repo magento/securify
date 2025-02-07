@@ -1,13 +1,14 @@
 {
     "name": "magento/module-re-captcha-contact",
     "description": "Google reCAPTCHA integration for Magento2",
-    "require": {
-        "php": "~8.1.0||~8.2.0",
-        "magento/framework": "*",
-        "magento/module-re-captcha-ui": "*"
-    },
     "type": "magento2-module",
     "license": "OSL-3.0",
+    "version": "1.1.2-p9",
+    "require": {
+        "php": "~8.1.0||~8.2.0||~8.3.0",
+        "magento/framework": "*",
+        "magento/module-re-captcha-ui": "1.1.*"
+    },
     "autoload": {
         "files": [
             "registration.php"
@@ -17,3 +18,4 @@
         }
     }
 }
+
