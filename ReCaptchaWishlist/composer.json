@@ -1,0 +1,19 @@
+{
+    "name": "magento/module-re-captcha-wishlist",
+    "description": "Google reCAPTCHA integration for Magento2",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "require": {
+        "php": "~8.2.0||~8.3.0||~8.4.0",
+        "magento/framework": "*",
+        "magento/module-re-captcha-ui": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\ReCaptchaWishlist\\": ""
+        }
+    }
+}

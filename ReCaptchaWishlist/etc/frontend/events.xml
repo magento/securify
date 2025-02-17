@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright 2024 Adobe
+ * All Rights Reserved.
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_wishlist_index_send">
+        <observer name="recaptcha_on_share_wish" instance="Magento\ReCaptchaWishlist\Observer\ShareWishlistObserver"/>
+    </event>
+</config>
