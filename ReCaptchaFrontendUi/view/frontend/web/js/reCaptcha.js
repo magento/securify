@@ -28,7 +28,16 @@ define(
              */
             initialize: function () {
                 this._super();
-                this._loadApi();
+
+                this.attachFocusEvent();
+            },
+
+            attachFocusEvent: function () {
+                const self = this, $parentForm = $('#' + this.getReCaptchaId() + '-container').parents('form');
+
+                $parentForm.one('focus', 'input, select, textarea', function () {
+                    self._loadApi();
+                });
             },
 
             /**
@@ -59,9 +68,7 @@ define(
              * @returns {Boolean}
              */
             getIsInvisibleRecaptcha: function () {
-                if (this.settings ===
-
-                    void 0) {
+                if (this.settings === void 0) {
                     return false;
                 }
 
@@ -95,9 +102,7 @@ define(
                     widgetId,
                     parameters;
 
-                if (this.captchaInitialized || this.settings ===
-
-                    void 0) {
+                if (this.captchaInitialized || this.settings === void 0) {
                     return;
                 }
 
